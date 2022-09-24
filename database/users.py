@@ -37,7 +37,21 @@ async def get_user(user_id):
             "exclude_domain": [],
             "has_access": False,
             "last_verified": datetime(2020, 5, 17),
-            
+            "base_site_1" : {
+                "email": None,
+                "password": None,
+                "api_key": None,
+            },
+            "base_site_2" : {
+                "email": None,
+                "password": None,
+                "api_key": None,
+            },
+            "base_site_3" : {
+                "email": None,
+                "password": None,
+                "api_key": None,
+            }
         }
 
         await col.insert_one(res)

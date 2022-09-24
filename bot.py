@@ -74,18 +74,19 @@ class Bot(Client):
         if not await db.get_bot_stats():
             await db.create_stats()
 
-        try:
-            db_channel = await self.get_chat(FILE_STORE_DB)
-            temp.DB_CHANNEL = db_channel
-            test = await self.send_message(chat_id = db_channel.id, text = "Test Message")
-            await test.delete()
-        except Exception as e:
-            logging.error(e)
-            sys.exit()
+        if FILE_STORE:
+            try:
+                
+                db_channel = await self.get_chat(FILE_STORE_DB)
+                temp.DB_CHANNEL = db_channel
+                test = await self.send_message(chat_id = db_channel.id, text = "Test Message")
+                await test.delete()
+            except Exception as e:
+                logging.error(e)
+                sys.exit()
 
-        await broadcast_admins(self, '** Bot started successfully **')
-        logging.info('Bot started')
-
+            await broadcast_admins(self, '** Bot started successfully **')
+            logging.info('Bot started')
 
     async def stop(self, *args):
         await broadcast_admins(self, '** Bot Stopped Bye **')

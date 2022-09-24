@@ -12,3 +12,4 @@ aiofiles
 validators
 requests
 lxml
+selenium

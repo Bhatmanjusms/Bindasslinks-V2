@@ -21,36 +21,38 @@ avl_web1 = "".join(f"- {i}\n" for i in base_sites)
 
 @Client.on_message(filters.command('start') & filters.private & filters.incoming)
 async def start(c:Client, m:Message):
-    is_user = await is_user_exist(m.from_user.id)
-    if not is_user and LOG_CHANNEL: await c.send_message(LOG_CHANNEL, f"#NewUser\n\nUser ID: `{m.from_user.id}`\nName: {m.from_user.mention}", )
     try:
-        new_user = await get_user(m.from_user.id)
-    except Exception:
-        logging.error("Error creating new user: {0}".format(m.from_user.mention), exc_info=True)
-        new_user = await get_user(m.from_user.id)
-
-    if len(m.command) >= 2:
+        is_user = await is_user_exist(m.from_user.id)
+        if not is_user and LOG_CHANNEL: await c.send_message(LOG_CHANNEL, f"#NewUser\n\nUser ID: `{m.from_user.id}`\nName: {m.from_user.mention}", )
         try:
-            _, user_api, site = m.command[1].strip().split('_')
-            if site in base_sites:
-                await update_user_info((m.from_user.id, {"shortener_api": user_api}))
-                site_index = base_sites.index(site) + 1
-                await update_user_info((m.from_user.id, {f"shortener_api_{site_index}": user_api}))
-                await m.reply_text(f"You have successfully connected your {site} API\n\nYour Api: {user_api}\n\n")
+            new_user = await get_user(m.from_user.id)
+        except Exception:
+            logging.error("Error creating new user: {0}".format(m.from_user.mention), exc_info=True)
+            new_user = await get_user(m.from_user.id)
 
-            else:
-                await m.reply_text("This website is not available")
-        except Exception as e:
-            logging.error("Error add user api: {0}".format(m.from_user.mention), exc_info=True)
-            await m.reply_text("Something went wrong. Please try again later.")
-        return
+        if len(m.command) >= 2:
+            try:
+                _, user_api, site = m.command[1].strip().split('_')
+                if site in base_sites:
+                    await update_user_info((m.from_user.id, {"shortener_api": user_api}))
+                    site_index = base_sites.index(site) + 1
+                    await update_user_info((m.from_user.id, {f"shortener_api_{site_index}": user_api}))
+                    await m.reply_text(f"You have successfully connected your {site} API\n\nYour Api: {user_api}\n\n")
 
-    t = START_MESSAGE.format(m.from_user.mention, new_user["method"], new_user["base_site"])
+                else:
+                    await m.reply_text("This website is not available")
+            except Exception as e:
+                logging.error("Error add user api: {0}".format(m.from_user.mention), exc_info=True)
+                await m.reply_text("Something went wrong. Please try again later.")
+            return
 
-    if WELCOME_IMAGE:
-        return await m.reply_photo(photo=WELCOME_IMAGE, caption=t, reply_markup=START_MESSAGE_REPLY_MARKUP, disable_web_page_preview=True)
-    await m.reply_text(t, reply_markup=START_MESSAGE_REPLY_MARKUP, disable_web_page_preview=True)
+        t = START_MESSAGE.format(m.from_user.mention, new_user["method"], new_user["base_site"])
 
+        if WELCOME_IMAGE:
+            return await m.reply_photo(photo=WELCOME_IMAGE, caption=t, reply_markup=START_MESSAGE_REPLY_MARKUP, disable_web_page_preview=True)
+        await m.reply_text(t, reply_markup=START_MESSAGE_REPLY_MARKUP, disable_web_page_preview=True)
+    except Exception as e:
+        logging.error(e)
 
 @Client.on_message(filters.command('help') & filters.private)
 async def help_command(c, m: Message):

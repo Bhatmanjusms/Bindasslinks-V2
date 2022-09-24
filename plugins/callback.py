@@ -26,8 +26,7 @@ logger = logging.getLogger(__name__)
 @Client.on_callback_query(filters.regex(r"^setgs"))
 async def user_setting_cb(c:Client,query: CallbackQuery):
     _, setting, toggle, user_id = query.data.split('#')
-    myvalues = {setting:True if toggle == "True" else False}
-
+    myvalues = {setting: toggle == "True"}
     await update_user_info(user_id, myvalues)
     user = await get_user(user_id)
     buttons = await get_me_button(user)
@@ -84,23 +83,13 @@ async def request_access_handler(c:Client,query: CallbackQuery):
             user = await get_user(user_id)
             if user["has_access"] and await is_user_verified(user_id=user_id):
                 return await query.message.reply("You already have access to this Bot")
-            else:
-                REPLY_MARKUP = InlineKeyboardMarkup([
-            [
-                InlineKeyboardButton('Allow', callback_data=f'give_access#{query.from_user.id}'),
-                InlineKeyboardButton('Deny', callback_data=f'deny_access#{query.from_user.id}'),
-            ],
-            [
-                
-                InlineKeyboardButton('Close', callback_data=f'delete'),
-            ],
+            REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Allow', callback_data=f'give_access#{query.from_user.id}'), InlineKeyboardButton('Deny', callback_data=f'deny_access#{query.from_user.id}'),], [InlineKeyboardButton('Close', callback_data='delete')]])
 
-        ])
-                await c.send_message(LOG_CHANNEL, f"""
+            await c.send_message(LOG_CHANNEL, f"""
 #NewRequest
 
 User ID: {user_id}""", reply_markup=REPLY_MARKUP)
-                await query.edit_message_text("Request has been sent to Admin. You will be notified when Admin accepts your request")
+            await query.edit_message_text("Request has been sent to Admin. You will be notified when Admin accepts your request")
         else:
             query.answer("Bot is Public", show_alert=True)
     except Exception as e:
@@ -147,7 +136,7 @@ async def on_callback_query(bot:Client, query:CallbackQuery):
                 await update_user_info(user_id, {"shortener_api": user[f'shortener_api_{site_index}']})
                 return await query.message.edit("Base Site Updated Sucessfully. Start sending posts",)
             REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton(site, url=f'https://{site}/member/tools/api')]])
-            await query.message.edit(f"There is no API found for {site}. Send your api from or Click the below button to connect",)
+            await query.message.edit(f"There is no API found for {site}. Send your api from or Click the below button to connect", reply_markup=REPLY_MARKUP)
         else:
             await query.message.edit("This website is not available")
 

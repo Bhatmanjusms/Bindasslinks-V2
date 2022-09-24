@@ -259,6 +259,12 @@ async def droplink_bypass_handler(text):
                 bypassed_link = await indianshortner_bypass(link)
             elif 'lksfy' in link and IS_LINKSHORTIFY:
                 bypassed_link = await linkshortify_bypass(link)
+            elif 'earnl.site' in link and IS_EARNL_SITE:
+                bypassed_link = await earnl_site_bypass(link)
+            elif 'earnl.xyz' in link and IS_EARNL_SITE:
+                bypassed_link = await earnl_xyz_bypass(link)
+            elif 'vearnl.in' in link and IS_URLEARN_XYZ:
+                bypassed_link = await urlearn_xyz_bypass(link)
             with contextlib.suppress(Exception):
                 text = text.replace(link, bypassed_link)
     return text
@@ -269,41 +275,28 @@ async def droplink_bypass(url):
     try:
         # client = aiohttp.ClientSession()
         async with aiohttp.ClientSession() as client:
-            async with client.get(url) as res:
-                
+            async with client.get(url) as res:    
                 ref = re.findall("action[ ]{0,}=[ ]{0,}['|\"](.*?)['|\"]", await res.text())[0]
-
                 h = {'referer': ref}
-
                 # res = client.get(url, headers=h)
                 async with client.get(url, headers=h) as res:
-
-
                     bs4 = BeautifulSoup(await res.content.read(), 'html.parser')
-
                     inputs = bs4.find_all('input')
-                    
                     data = { input.get('name'): input.get('value') for input in inputs }
-
                     h = {
                         'content-type': 'application/x-www-form-urlencoded',
                         'x-requested-with': 'XMLHttpRequest'
                     }
                     p = urlparse(url)
                     final_url = f'{p.scheme}://{p.netloc}/links/go'
-
                     await asyncio.sleep(3.1)
-
                     # res = client.post(final_url, data=data, headers=h).json()
                     async with client.post(final_url, data=data, headers=h) as res:
-
                         res = await res.json()
                         if res['status'] == 'success':
                             return res['url']
                         else:
                             raise Exception("Error while bypassing droplink {0}: {1}".format(url, res['message']))
-
-
     except Exception as e:
         raise Exception(e)
 
@@ -359,7 +352,7 @@ async def easysky_bypass(url):
             'x-requested-with': 'XMLHttpRequest',
         }
 
-        final_url = f'https://techy.veganab.co/links/go'
+        final_url = 'https://techy.veganab.co/links/go'
         time.sleep(5.1)
         res = client.post(final_url, data=data, headers=h,).json()
         return res['url']
@@ -386,6 +379,55 @@ async def bindasslink_bypass(url):
         return res['url']
     except Exception as e:
         raise Exception("Error while bypassing droplink {0}: {1}".format(url, e)) from e
+
+async def earnl_site_bypass(url):
+    url = url.replace("Go", "get")
+    try:
+        client = requests.Session()
+        res = client.get(url, headers={"referer": "https://s.apkdone.live/"})
+        bs4 = BeautifulSoup(res.content, 'lxml')
+        inputs = bs4.find_all('input')
+        data = {input.get('name'): input.get('value') for input in inputs}
+        h = {'content-type': 'application/x-www-form-urlencoded', 'x-requested-with': 'XMLHttpRequest'}
+        final_url = 'https://get.earnl.site/links/go'
+        time.sleep(int(os.environ.get('COUNTER_VALUE', '5')))
+        res = client.post(final_url, data=data, headers=h).json()
+        return res['url']
+    except Exception as e:
+        print(e)
+
+async def earnl_xyz_bypass(url):
+    url = url.replace("go", "v")
+    try:
+        client = requests.Session()
+        res = client.get(url, headers={"referer": "https://short.modmakers.xyz/"})
+        bs4 = BeautifulSoup(res.content, 'lxml')
+        inputs = bs4.find_all('input')
+        data = {input.get('name'): input.get('value') for input in inputs}
+        h = {'content-type': 'application/x-www-form-urlencoded', 'x-requested-with': 'XMLHttpRequest'}
+        final_url = 'https://v.earnl.xyz/links/go'
+        time.sleep(int(os.environ.get('COUNTER_VALUE', '5')))
+        res = client.post(final_url, data=data, headers=h).json()
+        return res['url']
+    except Exception as e:
+        print(e)
+
+async def urlearn_xyz_bypass(url):
+    url = url.replace("http://vearnl.in/", "https://go.urlearn.xyz/")
+    try:
+        client = requests.Session()
+        res = client.get(url, headers={"referer": "https://download.modmakers.xyz/"})
+        bs4 = BeautifulSoup(res.content, 'lxml')
+        inputs = bs4.find_all('input')
+        data = {input.get('name'): input.get('value') for input in inputs}
+        h = {'content-type': 'application/x-www-form-urlencoded', 'x-requested-with': 'XMLHttpRequest'}
+        final_url = 'https://go.urlearn.xyz/links/go'
+        time.sleep(int(os.environ.get('COUNTER_VALUE', '5')))
+        res = client.post(final_url, data=data, headers=h).json()
+        print(res)
+        return res['url']
+    except Exception as e:
+        print(e)
 
 async def tnlink_bypass(url):
     url = url.replace("https://tnlink.in", "https://gadgets.usanewstoday.club")
@@ -575,7 +617,6 @@ async def user_api_check(user):
         text += f"\n\nSend your Shortener API to continue...\nCurrent Website {user['base_site']}"
 
     return text or True
-
 
 async def encode(string):
     string_bytes = string.encode("ascii")

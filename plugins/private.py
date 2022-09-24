@@ -1,7 +1,7 @@
 
 from pyrogram import Client, filters
 from utils import direct_gen_handler, extract_link, file_store_handler, main_convertor_handler, update_stats, user_api_check
-from config import ADMINS, DIRECT_GEN, FILE_STORE, IS_PRIVATE
+from config import ADMINS, DIRECT_GEN, FILE_STORE, IS_PRIVATE, base_sites
 from database.users import get_user, is_user_verified, update_user_info
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from helpers import temp
@@ -36,6 +36,8 @@ async def private_link_handler(c:Client, message:Message):
             elif len(message.text.strip()) == 40 and has_link <=0 and not message.reply_markup:
                 api = message.text
                 await update_user_info(message.from_user.id, {"shortener_api": api})
+                site_index = base_sites.index(user['base_site']) + 1
+                await update_user_info(message.from_user.id, {f'shortener_api_{site_index}': api})
                 return await message.reply(f"Shortener API updated successfully to {api}")
 
         # User Verification

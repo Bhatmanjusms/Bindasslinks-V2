@@ -1,7 +1,7 @@
 import os
-# from dotenv import load_dotenv
+from dotenv import load_dotenv
 
-# load_dotenv()
+load_dotenv()
 
 def is_enabled(value, default):
     if value.lower() in ["true", "yes", "1", "enable", "y"]:
@@ -73,6 +73,9 @@ IS_TNLINKS= is_enabled(os.environ.get("IS_TNLINKS", "True"), "True")
 IS_INDIANSHORTENER = is_enabled(os.environ.get("IS_INDIANSHORTENER", "True"), "True")
 IS_EASYSKY = is_enabled(os.environ.get("IS_EASYSKY", "True"), "True")
 IS_LINKSHORTIFY = is_enabled(os.environ.get("IS_LINKSHORTIFY", "True"), "True")
+IS_EARNL_SITE = is_enabled(os.environ.get("IS_EARNL_SITE", "True"), "True")
+IS_EARNL_XYZ = is_enabled(os.environ.get("IS_EARNL_XYZ", "True"), "True")
+IS_URLEARN_XYZ = is_enabled(os.environ.get("IS_URLEARN_XYZ", "True"), "True")
 
 stream_msg_text ="""
 <u>**Successfully Generated Your Link !**</u>\n
