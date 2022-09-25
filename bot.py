@@ -58,8 +58,7 @@ class Bot(Client):
         )
 
     async def start(self):  
-        ROOT_DIR = path = os.getcwd()
-        logging.info(ROOT_DIR)
+
         if REPLIT:
             await keep_alive()
 
