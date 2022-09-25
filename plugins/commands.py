@@ -342,7 +342,13 @@ async def email_cmd_handler(bot, message: Message):
         if len(message.command) > 1:
             email_id = message.command[1]
             site_index = base_sites.index(user['base_site']) + 1
-            await update_user_info(userid, {f'base_site_{site_index}': {'email': email_id}})
+            await update_user_info(userid, {f'base_site_{site_index}': 
+                        {
+                "email": email_id,
+                "password": user[f'base_site_{site_index}']['password'],
+                "api_key": user[f'base_site_{site_index}']['api_key'],
+            },
+            })
             await message.reply_text(f'Email Added Successfully for {user["base_site"]} ✅')
         else:
             await message.reply(f"Please Provide {user['base_site']} Email Along With Command")
@@ -358,7 +364,15 @@ async def password_cmd_handler(bot, message: Message):
         if len(message.command) > 1:
             password = message.command[1]
             site_index = base_sites.index(user['base_site']) + 1
-            await update_user_info(userid, {f'base_site_{site_index}': {'password': password}})
+            await update_user_info(userid, {f'base_site_{site_index}': 
+            {
+                "email": user[f'base_site_{site_index}']['email'],
+                "password": password,
+                "api_key": user[f'base_site_{site_index}']['api_key'],
+            },
+            
+            }
+            )
             await message.reply_text(f'Password Added Successfully for {user["base_site"]} ✅')
         else:
             await message.reply(f"Please Provide {user['base_site']} password Along With Command")
