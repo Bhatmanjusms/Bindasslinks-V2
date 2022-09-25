@@ -427,8 +427,8 @@ async def balance_cmd_handler(bot, message: Message):
         await message.reply_text(msg, quote=True)
         driver.quit()
     except NoSuchElementException as e:
-        print(e)
+        logging.exception(e, exc_info=True)
         await message.reply(f"**Please Add Mail & Password Before Using This Command!!**\n\n**(or)**\n\n**Invalid Email or Password**\n\n Click On **Help** Button To Know", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data="help"),InlineKeyboardButton('About Bot', callback_data="about")]]))
     except Exception as e:
-        print(e)
+        logging.exception(e, exc_info=True)
         await message.reply("Some error occurred")
