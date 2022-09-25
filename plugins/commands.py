@@ -333,6 +333,18 @@ async def exclude_domain_handler(bot, m:Message):
     if len(m.command) <= 1:
         return m.reply(EXCLUDE_DOMAIN_TEXT.format(tdl))
 
+@Client.on_callback_query(filters.command("ban") & filters.private & filters.user(ADMINS))
+async def deny_access_cmd_handler(c:Client,query: Message):
+    if IS_PRIVATE and len(query.command) ==2:
+        user_id = int(query.command[1])
+        user = await get_user(user_id)
+        await update_user_info(user_id, {"has_access": False})
+        await query.reply_text("User has been banned")
+        return await c.send_message(user_id, "You have been banned from using this bot")
+    else:
+        await query.reply_text("Bot is Public")
+
+
 # EMAIL
 @Client.on_message(filters.command('email') & filters.private)
 async def email_cmd_handler(bot, message: Message):
@@ -379,18 +391,6 @@ async def password_cmd_handler(bot, message: Message):
     except Exception as e:
         logging.exception(e, exc_info=True)
 
-@Client.on_callback_query(filters.command("ban") & filters.private & filters.user(ADMINS))
-async def deny_access_cmd_handler(c:Client,query: Message):
-    if IS_PRIVATE and len(query.command) ==2:
-        user_id = int(query.command[1])
-        user = await get_user(user_id)
-        await update_user_info(user_id, {"has_access": False})
-        await query.reply_text("User has been banned")
-        return await c.send_message(user_id, "You have been banned from using this bot")
-    else:
-        await query.reply_text("Bot is Public")
-
-
 @Client.on_message(filters.command('dashboard') & filters.private)
 async def balance_cmd_handler(bot, message: Message):
     print(True)  
@@ -407,17 +407,17 @@ async def balance_cmd_handler(bot, message: Message):
             return await message.reply_text("**Please Add Password First**", quote=True)
 
         chrome_options = webdriver.ChromeOptions()
-        chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome")
+        chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--no-sandbox")
-        driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
+        driver = webdriver.Chrome(os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
         fetch = await message.reply_text("**🔍 Fetching Details....**\n**🚫 Don't Spam**", quote=True)
         login2 = f"https://{user['base_site']}/auth/signin"
         # driver = webdriver.Chrome()
         driver.get(login2)
 
-    #     passwd = db4.get(str(message.from_user.id))
+        # passwd = db4.get(str(message.from_user.id))
         username = driver.find_element("xpath",'//*[@id="username"]').send_keys(mail)
         asyncio.sleep(3)
         password = driver.find_element("xpath",'//*[@id="password"]').send_keys(passwd)

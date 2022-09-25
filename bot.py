@@ -61,7 +61,6 @@ class Bot(Client):
 
         if REPLIT:
             await keep_alive()
-
             asyncio.create_task(ping_server())
 
         temp.START_TIME = datetime.datetime.now()
@@ -85,7 +84,7 @@ class Bot(Client):
                 logging.error(e)
                 sys.exit()
 
-            await broadcast_admins(self, '** Bot started successfully **')
+        await broadcast_admins(self, '** Bot started successfully **')
         logging.info('Bot started')
 
     async def stop(self, *args):
