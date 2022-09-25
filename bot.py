@@ -58,7 +58,8 @@ class Bot(Client):
         )
 
     async def start(self):  
-
+        ROOT_DIR = os.path.dirname(os.path.abspath(__file__))
+        logging.info(ROOT_DIR)
         if REPLIT:
             await keep_alive()
 
@@ -86,7 +87,7 @@ class Bot(Client):
                 sys.exit()
 
             await broadcast_admins(self, '** Bot started successfully **')
-            logging.info('Bot started')
+        logging.info('Bot started')
 
     async def stop(self, *args):
         await broadcast_admins(self, '** Bot Stopped Bye **')
