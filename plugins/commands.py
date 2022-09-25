@@ -94,15 +94,7 @@ async def method_handler(c:Client, m:Message):
 
 @Client.on_message(filters.command('restart') & filters.user(ADMINS) & filters.private)
 async def restart_handler(c: Client, m:Message):
-    RESTARTE_MARKUP = InlineKeyboardMarkup([
-    [
-        InlineKeyboardButton('Sure', callback_data=f'restart'),
-        InlineKeyboardButton('Disable', callback_data=f'delete'),
-
-    ],
-
-])
-
+    RESTARTE_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Sure', callback_data='restart'), InlineKeyboardButton('Disable', callback_data='delete')]])
     await m.reply("Are you sure you want to restart / re-deploy the server?", reply_markup=RESTARTE_MARKUP)
 
 
@@ -251,7 +243,7 @@ async def username_handler(bot, m: Message):
         else:
             username = cmd[1].strip().replace("@", "")
             await update_user_info(user_id, {"username": username})
-            await m.reply("Username updated successfully to " + username)
+            await m.reply(f"Username updated successfully to {username}")
 
 
 @Client.on_message(filters.command('banner_image') & filters.private)
@@ -261,16 +253,13 @@ async def banner_image_handler(bot, m:Message):
     cmd = m.command
 
     if len(cmd) == 1:
-        if m.reply_to_message and m.reply_to_message.photo:
-            # Getting the file_id of the photo that was sent to the bot.
-            fileid = m.reply_to_message.photo.file_id
-            await update_user_info(user_id, {"banner_image": fileid})
-            return await m.reply_photo(fileid, caption="Banner Image updated successfully")
-        else:
-            if user["banner_image"]:
-                return await m.reply_photo(user["banner_image"], caption=BANNER_IMAGE)
-            else:
-                return await m.reply("Current Banner Image URL: None\n" + BANNER_IMAGE)
+        if not m.reply_to_message or not m.reply_to_message.photo:
+            return await m.reply_photo(user["banner_image"], caption=BANNER_IMAGE) if user["banner_image"] else await m.reply("Current Banner Image URL: None\n" + BANNER_IMAGE)
+
+        # Getting the file_id of the photo that was sent to the bot.
+        fileid = m.reply_to_message.photo.file_id
+        await update_user_info(user_id, {"banner_image": fileid})
+        return await m.reply_photo(fileid, caption="Banner Image updated successfully")
     elif len(cmd) == 2:    
         if "remove" in cmd:
             await update_user_info(user_id, {"banner_image": ""})
@@ -286,18 +275,14 @@ async def banner_image_handler(bot, m:Message):
 
 @Client.on_message(filters.command('base_site') & filters.private)
 async def base_site_handler(bot, m:Message):
-
     user_id = m.from_user.id
     user = await get_user(user_id)
-    cmd = m.command
-
-    if len(cmd) == 1:
-        site = user['base_site']
-        text = f"`/base_site (base_site)`\n\nCurrent base site: {site}\n\n`EX: /base_site {base_sites[0]}`\n\nAvailable base sites:\n{avl_web1}"
-        return await m.reply(
-        text=text,
-        disable_web_page_preview=True,
-        reply_markup=BASE_SITE_REPLY_MARKUP)
+    site = user['base_site']
+    text = f"`/base_site (base_site)`\n\nCurrent base site: {site}\n\nAvailable base sites:\n{avl_web1}"
+    return await m.reply(
+    text=text,
+    disable_web_page_preview=True,
+    reply_markup=BASE_SITE_REPLY_MARKUP)
 
 @Client.on_message(filters.command('features') & filters.private )
 async def features(bot, message):
@@ -372,3 +357,30 @@ async def deny_access_cmd_handler(c:Client,query: Message):
         return await c.send_message(user_id, "You have been banned from using this bot")
     else:
         await query.reply_text("Bot is Public")
+
+# EMAIL
+@Client.on_message(filters.command('email') & filters.private)
+async def email_cmd_handler(bot, message: Message):
+    if len(message.command) > 1:
+        userid = message.from_user.id
+        email_id = message.command[1]
+        user = await get_user(userid)
+        site_index = base_sites.index(user['base_site']) + 1
+        await update_user_info(userid, {f'base_site_{site_index}': {'email': email_id}})
+        await message.reply_text(f'Email Added Successfully for {user["base_site"]} ✅')
+    else:
+        await message.reply(f"Please Provide {user['base_site']} Email Along With Command")
+
+# password
+@Client.on_message(filters.command('password') & filters.private)
+async def password_cmd_handler(bot, message: Message):
+    if len(message.command) > 1:
+        userid = message.from_user.id
+        password = message.command[1]
+        user = await get_user(userid)
+        site_index = base_sites.index(user['base_site']) + 1
+        await update_user_info(userid, {f'base_site_{site_index}': {'password': password}})
+        await message.reply_text(f'Password Added Successfully for {user["base_site"]} ✅')
+    else:
+        await message.reply(f"Please Provide {user['base_site']} password Along With Command")
+        

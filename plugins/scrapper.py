@@ -9,34 +9,9 @@ from database.users import get_user, update_user_info
 from config import base_sites
 
 
-# EMAIL
-@Client.on_message(filters.command('email') & filters.private)
-async def email(bot, message: Message):
-    if len(message.command) > 1:
-        userid = message.from_user.id
-        email_id = message.command[1]
-        user = await get_user(userid)
-        site_index = base_sites.index(user['base_site']) + 1
-        await update_user_info(userid, {f'base_site_{site_index}': {'email': email_id}})
-        await message.reply_text(f'Email Added Successfully for {user["base_site"]} ✅')
-    else:
-        await message.reply(f"Please Provide {user['base_site']} Email Along With Command")
-
-# password
-@Client.on_message(filters.command('password') & filters.private)
-async def password(bot, message: Message):
-    if len(message.command) > 1:
-        userid = message.from_user.id
-        password = message.command[1]
-        user = await get_user(userid)
-        site_index = base_sites.index(user['base_site']) + 1
-        await update_user_info(userid, {f'base_site_{site_index}': {'password': password}})
-        await message.reply_text(f'Password Added Successfully for {user["base_site"]} ✅')
-    else:
-        await message.reply(f"Please Provide {user['base_site']} password Along With Command")
 
 @Client.on_message(filters.command('stats') & filters.private)
-async def balance(bot, message: Message):
+async def balance_cmd_handler(bot, message: Message):
   try:
     userid = message.from_user.id
     user = await get_user(userid)
