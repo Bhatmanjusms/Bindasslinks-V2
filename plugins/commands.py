@@ -343,7 +343,7 @@ async def email_cmd_handler(bot, message: Message):
             email_id = message.command[1]
             site_index = base_sites.index(user['base_site']) + 1
             await update_user_info(userid, {f'base_site_{site_index}': 
-                        {
+            {
                 "email": email_id,
                 "password": user[f'base_site_{site_index}']['password'],
                 "api_key": user[f'base_site_{site_index}']['api_key'],
