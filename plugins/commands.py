@@ -1,10 +1,13 @@
+import asyncio
 import datetime
 import logging
 
 from config import (ADMINS, BASE_SITE, HEROKU, HEROKU_API_KEY, HEROKU_APP_NAME,
-                    INCLUDE_DOMAIN, IS_DEFAULT_BASE_SITE, IS_PRIVATE, LOG_CHANNEL, SOURCE_CODE, WELCOME_IMAGE,base_sites )
+                    INCLUDE_DOMAIN, IS_DEFAULT_BASE_SITE, IS_PRIVATE,
+                    LOG_CHANNEL, SOURCE_CODE, WELCOME_IMAGE, base_sites)
 from database import db
-from database.users import get_user, is_user_exist, total_users_count, update_user_info
+from database.users import (get_user, is_user_exist, total_users_count,
+                            update_user_info)
 from helpers import temp
 from pyrogram import Client, filters
 from pyrogram.types import Message
@@ -12,10 +15,11 @@ from translation import *
 from utils import (broadcast_admins, extract_link, get_me_button, get_size,
                    getHerokuDetails)
 
-from plugins.filters import is_private
+from selenium.common.exceptions import NoSuchElementException
 
 logger = logging.getLogger(__name__)
-
+from selenium import *
+from selenium import webdriver
 
 avl_web1 = "".join(f"- {i}\n" for i in base_sites)
 
@@ -84,13 +88,12 @@ async def method_handler(c:Client, m:Message):
     if len(cmd) == 1:
         s = METHOD_MESSAGE.format(method=user["method"], shortener=user["base_site"],)
         return await m.reply(s, reply_markup=METHOD_REPLY_MARKUP)
-    elif len(cmd) == 2:    
+    elif len(cmd) == 2:
         method = cmd[1]
-        if method in ["mdisk", "mdlink", "shortener"]:
-            await update_user_info(user_id, {"method": method })
-            await m.reply("Method updated successfully to " + method)
-        else:
+        if method not in ["mdisk", "mdlink", "shortener"]:
             return await m.reply(METHOD_MESSAGE.format(method=user["method"]))
+        await update_user_info(user_id, {"method": method })
+        await m.reply(f"Method updated successfully to {method}")
 
 @Client.on_message(filters.command('restart') & filters.user(ADMINS) & filters.private)
 async def restart_handler(c: Client, m:Message):
@@ -303,16 +306,8 @@ async def settings_cmd_handler(bot, m:Message):
 
     user_id = m.from_user.id
     user = await get_user(user_id)
-    res = USER_ABOUT_MESSAGE.format(
-                base_site=user["base_site"], 
-                method=user["method"], 
-                shortener_api=user["shortener_api"], 
-                mdisk_api=user["mdisk_api"],
-                username=user["username"],
-                header_text=user["header_text"] if user["header_text"] else None,
-                footer_text=user["footer_text"] if user["footer_text"] else None,
-                banner_image=user["banner_image"],
-                bitly_api=user["bitly_api"])
+    res = USER_ABOUT_MESSAGE.format(base_site=user["base_site"], method=user["method"], shortener_api=user["shortener_api"], mdisk_api=user["mdisk_api"], username=user["username"], header_text=user["header_text"] or None, footer_text=user["footer_text"] or None, banner_image=user["banner_image"], bitly_api=user["bitly_api"])
+
 
     buttons = await get_me_button(user)
     reply_markup = InlineKeyboardMarkup(buttons)
@@ -325,10 +320,7 @@ async def include_domain_handler(bot, m:Message):
     user = get_user(m.from_user.id)
     inc_domain = user["include_domain"]
 
-    tdl = ""
-
-    for i in inc_domain:
-        tdl+= f"- {i}\n"
+    tdl = "".join(f"- {i}\n" for i in inc_domain)
 
     if len(m.command) <= 1:
         return m.reply(INCLUDE_DOMAIN_TEXT.format(tdl))
@@ -337,15 +329,41 @@ async def include_domain_handler(bot, m:Message):
 async def exclude_domain_handler(bot, m:Message):
     user = get_user(m.from_user.id)
     ex_domain = user["exclude_domain"]
-
-    tdl = ""
-
-    for i in ex_domain:
-        tdl+= f"- {i}\n"
-
+    tdl = "".join(f"- {i}\n" for i in ex_domain)
     if len(m.command) <= 1:
         return m.reply(EXCLUDE_DOMAIN_TEXT.format(tdl))
 
+# EMAIL
+@Client.on_message(filters.command('email') & filters.private)
+async def email_cmd_handler(bot, message: Message):
+    userid = message.from_user.id
+    user = await get_user(userid)
+    try:
+        if len(message.command) > 1:
+            email_id = message.command[1]
+            site_index = base_sites.index(user['base_site']) + 1
+            await update_user_info(userid, {f'base_site_{site_index}': {'email': email_id}})
+            await message.reply_text(f'Email Added Successfully for {user["base_site"]} ✅')
+        else:
+            await message.reply(f"Please Provide {user['base_site']} Email Along With Command")
+    except Exception as e:
+        logging.exception(e, exc_info=True)
+
+# password
+@Client.on_message(filters.command('password') & filters.private)
+async def password_cmd_handler(bot, message: Message):
+    userid = message.from_user.id
+    user = await get_user(userid)
+    try:
+        if len(message.command) > 1:
+            password = message.command[1]
+            site_index = base_sites.index(user['base_site']) + 1
+            await update_user_info(userid, {f'base_site_{site_index}': {'password': password}})
+            await message.reply_text(f'Password Added Successfully for {user["base_site"]} ✅')
+        else:
+            await message.reply(f"Please Provide {user['base_site']} password Along With Command")
+    except Exception as e:
+        logging.exception(e, exc_info=True)
 
 @Client.on_callback_query(filters.command("ban") & filters.private & filters.user(ADMINS))
 async def deny_access_cmd_handler(c:Client,query: Message):
@@ -358,29 +376,65 @@ async def deny_access_cmd_handler(c:Client,query: Message):
     else:
         await query.reply_text("Bot is Public")
 
-# EMAIL
-@Client.on_message(filters.command('email') & filters.private)
-async def email_cmd_handler(bot, message: Message):
-    if len(message.command) > 1:
-        userid = message.from_user.id
-        email_id = message.command[1]
-        user = await get_user(userid)
-        site_index = base_sites.index(user['base_site']) + 1
-        await update_user_info(userid, {f'base_site_{site_index}': {'email': email_id}})
-        await message.reply_text(f'Email Added Successfully for {user["base_site"]} ✅')
-    else:
-        await message.reply(f"Please Provide {user['base_site']} Email Along With Command")
 
-# password
-@Client.on_message(filters.command('password') & filters.private)
-async def password_cmd_handler(bot, message: Message):
-    if len(message.command) > 1:
-        userid = message.from_user.id
-        password = message.command[1]
-        user = await get_user(userid)
-        site_index = base_sites.index(user['base_site']) + 1
-        await update_user_info(userid, {f'base_site_{site_index}': {'password': password}})
-        await message.reply_text(f'Password Added Successfully for {user["base_site"]} ✅')
-    else:
-        await message.reply(f"Please Provide {user['base_site']} password Along With Command")
-        
+@Client.on_message(filters.command('dashboard') & filters.private)
+async def balance_cmd_handler(bot, message: Message):
+  print(True)  
+  try:
+    userid = message.from_user.id
+    user = await get_user(userid)
+
+    site_index = base_sites.index(user['base_site']) + 1
+    mail = user[f'base_site_{site_index}']['email']
+
+    if not mail:
+        await message.reply_text("**Please Add Email First**", quote=True)
+#     mail = db3.get(str(message.from_user.id))
+
+    passwd = user[f'base_site_{site_index}']['password']
+    if not passwd:
+        await message.reply_text("**Please Add Password First**", quote=True)
+
+    chrome_options = webdriver.ChromeOptions()
+    chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN", "/app/.apt/usr/bin/google-chrome")
+    chrome_options.add_argument("--headless")
+    chrome_options.add_argument("--disable-dev-shm-usage")
+    chrome_options.add_argument("--no-sandbox")
+    driver = webdriver.Chrome(executable_path=os.environ.get("CHROMEDRIVER_PATH", "/app/.chromedriver/bin/chromedriver"), chrome_options=chrome_options)
+    fetch = await message.reply_text("**🔍 Fetching Details....**\n**🚫 Don't Spam**", quote=True)
+    login2 = f"https://{user['base_site']}/auth/signin"
+    # driver = webdriver.Chrome()
+    driver.get(login2)
+
+#     passwd = db4.get(str(message.from_user.id))
+    username = driver.find_element("xpath",'//*[@id="username"]').send_keys(mail)
+    asyncio.sleep(3)
+    password = driver.find_element("xpath",'//*[@id="password"]').send_keys(passwd)
+    asyncio.sleep(3)
+    sign = driver.find_element("xpath",'//*[@id="invisibleCaptchaSignin"]').click()
+    asyncio.sleep(5)
+    # balance = driver.find_element_by_xpath('/html/body/div[1]/div[1]/section/div[3]/div[2]/div/div/div/div[1]/span').text()
+    view = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[3]/div[1]/div/div/div/div[1]/span").text
+    view2 = view.replace(" ","")
+    balance = driver.find_element("xpath",'/html/body/div[1]/div[1]/section/div[3]/div[2]/div/div/div/div[1]/span').text
+    name = driver.find_element('xpath',"/html/body/div[1]/aside/section/li/a/div[2]/p").text 
+    date = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[3]/div[1]/div/div/p/span[2]").text
+    avg_cpm = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[3]/div[4]/div/div/div/div[1]/span").text
+    ref_earn = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[3]/div[3]/div/div/div/div[1]/span").text
+    tbalance = driver.find_element('xpath',"/html/body/div[1]/aside/section/ul/li[3]/a/span").click()
+    asyncio.sleep(3)
+    total_balance = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[2]/div[1]/div/div/div/div/h6").text
+    msg = f"**😎Username:** {name}\n**🗓Date:** {date}\n\n**📊Your Today's Statistic\n\n**👀 Views:** {view2}\n**💰Earnings:** {balance}\n**👬REF Earn:** {ref_earn}\n**💲Avg CPM:** {avg_cpm}\n\n**🤑 Total Available Balance :** {total_balance}"
+    driver.close()
+    await fetch.delete()
+    await message.reply_text(msg, quote=True)
+    driver.quit()
+  except NoSuchElementException as e:
+    print(e)
+    await fetch.delete()
+#     message.reply_text(f"**Please Add Mail & Password Before Using This Command!!**\n\n**(or)**\n\n**Invalid Email or Password**", quote=True)
+    await message.reply(f"**Please Add Mail & Password Before Using This Command!!**\n\n**(or)**\n\n**Invalid Email or Password**\n\n Click On **Help** Button To Know", bot,
+                            reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data="help"),InlineKeyboardButton('About Bot', callback_data="about")]]))
+
+  except Exception as e:
+    print(e)
