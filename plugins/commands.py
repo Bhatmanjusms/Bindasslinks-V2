@@ -1,4 +1,4 @@
-import asyncio
+
 import datetime
 import logging
 
@@ -14,12 +14,10 @@ from pyrogram.types import Message
 from translation import *
 from utils import (broadcast_admins, extract_link, get_me_button, get_size,
                    getHerokuDetails)
-from webdriver_manager.chrome import ChromeDriverManager
-from selenium.common.exceptions import NoSuchElementException
+
 
 logger = logging.getLogger(__name__)
-from selenium import *
-from selenium import webdriver
+
 
 avl_web1 = "".join(f"- {i}\n" for i in base_sites)
 
@@ -248,6 +246,25 @@ async def username_handler(bot, m: Message):
             await update_user_info(user_id, {"username": username})
             await m.reply(f"Username updated successfully to {username}")
 
+@Client.on_message(filters.command('channel_link') & filters.private)
+async def pvt_links_handler(bot, m: Message):
+    user_id = m.from_user.id
+    user = await get_user(user_id)
+    cmd = m.command
+    if len(cmd) == 1:
+        try:
+            pvt_link = user["pvt_link"] or None
+        except KeyError:
+            pvt_link = None
+        return await m.reply(PVT_LINKS_TEXT.format(pvt_link=pvt_link))
+    elif len(cmd) == 2:
+        if "remove" in cmd:
+            await update_user_info(user_id, {"pvt_link": ""})
+            return await m.reply("Private Link Successfully Removed")
+        else:
+            pvt_link = cmd[1].strip()
+            await update_user_info(user_id, {"pvt_link": pvt_link})
+            await m.reply(f"Private Link updated successfully to {pvt_link}")
 
 @Client.on_message(filters.command('banner_image') & filters.private)
 async def banner_image_handler(bot, m:Message):
@@ -306,8 +323,7 @@ async def settings_cmd_handler(bot, m:Message):
 
     user_id = m.from_user.id
     user = await get_user(user_id)
-    res = USER_ABOUT_MESSAGE.format(base_site=user["base_site"], method=user["method"], shortener_api=user["shortener_api"], mdisk_api=user["mdisk_api"], username=user["username"], header_text=user["header_text"] or None, footer_text=user["footer_text"] or None, banner_image=user["banner_image"], bitly_api=user["bitly_api"])
-
+    res = USER_ABOUT_MESSAGE.format(base_site=user["base_site"], method=user["method"], shortener_api=user["shortener_api"], mdisk_api=user["mdisk_api"], username=user["username"], header_text=user["header_text"] or None, footer_text=user["footer_text"] or None, banner_image=user["banner_image"], bitly_api=user["bitly_api"],channel_link=user['pvt_link'])
 
     buttons = await get_me_button(user)
     reply_markup = InlineKeyboardMarkup(buttons)
@@ -345,104 +361,3 @@ async def deny_access_cmd_handler(c:Client,query: Message):
         await query.reply_text("Bot is Public")
 
 
-# EMAIL
-@Client.on_message(filters.command('email') & filters.private)
-async def email_cmd_handler(bot, message: Message):
-    userid = message.from_user.id
-    user = await get_user(userid)
-    try:
-        if len(message.command) > 1:
-            email_id = message.command[1]
-            site_index = base_sites.index(user['base_site']) + 1
-            await update_user_info(userid, {f'base_site_{site_index}': 
-            {
-                "email": email_id,
-                "password": user[f'base_site_{site_index}']['password'],
-                "api_key": user[f'base_site_{site_index}']['api_key'],
-            },
-            })
-            await message.reply_text(f'Email Added Successfully for {user["base_site"]} ✅')
-        else:
-            await message.reply(f"Please Provide {user['base_site']} Email Along With Command")
-    except Exception as e:
-        logging.exception(e, exc_info=True)
-
-# password
-@Client.on_message(filters.command('password') & filters.private)
-async def password_cmd_handler(bot, message: Message):
-    userid = message.from_user.id
-    user = await get_user(userid)
-    try:
-        if len(message.command) > 1:
-            password = message.command[1]
-            site_index = base_sites.index(user['base_site']) + 1
-            await update_user_info(userid, {f'base_site_{site_index}': 
-            {
-                "email": user[f'base_site_{site_index}']['email'],
-                "password": password,
-                "api_key": user[f'base_site_{site_index}']['api_key'],
-            },
-            
-            }
-            )
-            await message.reply_text(f'Password Added Successfully for {user["base_site"]} ✅')
-        else:
-            await message.reply(f"Please Provide {user['base_site']} password Along With Command")
-    except Exception as e:
-        logging.exception(e, exc_info=True)
-
-@Client.on_message(filters.command('dashboard') & filters.private)
-async def balance_cmd_handler(bot, message: Message):
-    print(True)  
-    try:
-        userid = message.from_user.id
-        user = await get_user(userid)
-        site_index = base_sites.index(user['base_site']) + 1
-        mail = user[f'base_site_{site_index}']['email']
-
-        if not mail:
-            return await message.reply_text("**Please Add Email First**", quote=True)
-        passwd = user[f'base_site_{site_index}']['password']
-        if not passwd:
-            return await message.reply_text("**Please Add Password First**", quote=True)
-
-        chrome_options = webdriver.ChromeOptions()
-        chrome_options.binary_location = os.environ.get("GOOGLE_CHROME_BIN")
-        chrome_options.add_argument("--headless")
-        chrome_options.add_argument("--disable-dev-shm-usage")
-        chrome_options.add_argument("--no-sandbox")
-        driver = webdriver.Chrome(os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
-        fetch = await message.reply_text("**🔍 Fetching Details....**\n**🚫 Don't Spam**", quote=True)
-        login2 = f"https://{user['base_site']}/auth/signin"
-        # driver = webdriver.Chrome()
-        driver.get(login2)
-
-        # passwd = db4.get(str(message.from_user.id))
-        username = driver.find_element("xpath",'//*[@id="username"]').send_keys(mail)
-        asyncio.sleep(3)
-        password = driver.find_element("xpath",'//*[@id="password"]').send_keys(passwd)
-        asyncio.sleep(3)
-        sign = driver.find_element("xpath",'//*[@id="invisibleCaptchaSignin"]').click()
-        asyncio.sleep(5)
-        # balance = driver.find_element_by_xpath('/html/body/div[1]/div[1]/section/div[3]/div[2]/div/div/div/div[1]/span').text()
-        view = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[3]/div[1]/div/div/div/div[1]/span").text
-        view2 = view.replace(" ","")
-        balance = driver.find_element("xpath",'/html/body/div[1]/div[1]/section/div[3]/div[2]/div/div/div/div[1]/span').text
-        name = driver.find_element('xpath',"/html/body/div[1]/aside/section/li/a/div[2]/p").text 
-        date = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[3]/div[1]/div/div/p/span[2]").text
-        avg_cpm = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[3]/div[4]/div/div/div/div[1]/span").text
-        ref_earn = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[3]/div[3]/div/div/div/div[1]/span").text
-        tbalance = driver.find_element('xpath',"/html/body/div[1]/aside/section/ul/li[3]/a/span").click()
-        asyncio.sleep(3)
-        total_balance = driver.find_element('xpath',"/html/body/div[1]/div[1]/section/div[2]/div[1]/div/div/div/div/h6").text
-        msg = f"**😎Username:** {name}\n**🗓Date:** {date}\n\n**📊Your Today's Statistic\n\n**👀 Views:** {view2}\n**💰Earnings:** {balance}\n**👬REF Earn:** {ref_earn}\n**💲Avg CPM:** {avg_cpm}\n\n**🤑 Total Available Balance :** {total_balance}"
-        driver.close()
-        await fetch.delete()
-        await message.reply_text(msg, quote=True)
-        driver.quit()
-    except NoSuchElementException as e:
-        logging.exception(e, exc_info=True)
-        await message.reply(f"**Please Add Mail & Password Before Using This Command!!**\n\n**(or)**\n\n**Invalid Email or Password**\n\n Click On **Help** Button To Know", reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data="help"),InlineKeyboardButton('About Bot', callback_data="about")]]))
-    except Exception as e:
-        logging.exception(e, exc_info=True)
-        await message.reply("Some error occurred")

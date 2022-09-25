@@ -156,6 +156,8 @@ USER_ABOUT_MESSAGE = """**
 
 - ᴜsᴇʀɴᴀᴍᴇ: @{username}
 
+- Channel link: {channel_link}
+
 - ʜᴇᴀᴅᴇʀ ᴛᴇxᴛ: 
 {header_text}
 
@@ -216,6 +218,17 @@ Example :- `/username @CR_0O0`
 
 To remove this username, `/username remove`**"""
 USERNAME_TEXT =  os.environ.get('USERNAME_MESSAGE', USERNAME_TEXT)
+
+PVT_LINKS_TEXT = """"**Current Channel Links: {pvt_link}
+
+Usage: `/channel_link https://t.me/+riua0Y3YXHo4NjY1`
+
+This Channel Link will be automatically replaced with other private links in the post
+
+Example :- `/channel_link https://t.me/+riua0Y3YXHo4NjY1` 
+
+To remove this Channel Link, `/channel_link remove`**"""
+PVT_LINKS_TEXT =  os.environ.get('PVT_LINKS_TEXT', PVT_LINKS_TEXT)
 
 BANNER_IMAGE = """**Current Banner Image URL: {banner_image}
 

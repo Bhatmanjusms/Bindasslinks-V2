@@ -7,7 +7,7 @@ from datetime import datetime
 
 from config import ADMINS, IS_PRIVATE, LOG_CHANNEL, SOURCE_CODE, VERIFIED_TIME, base_sites
 from database import update_user_info
-from database.users import get_user, is_user_verified, update_verify_user
+from database.users import get_user, is_user_verified
 from helpers import Helpers, temp
 from pyrogram import Client, filters
 from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
@@ -26,20 +26,17 @@ logger = logging.getLogger(__name__)
 @Client.on_callback_query(filters.regex(r"^setgs"))
 async def user_setting_cb(c:Client,query: CallbackQuery):
     _, setting, toggle, user_id = query.data.split('#')
+    print(toggle)
     myvalues = {setting: toggle == "True"}
     await update_user_info(user_id, myvalues)
     user = await get_user(user_id)
     buttons = await get_me_button(user)
     reply_markup = InlineKeyboardMarkup(buttons)
-
     try:
         await query.message.edit_reply_markup(reply_markup)
-
         setting = (re.sub(r"is|_", " ", setting)).title()
         toggle = "Enabled" if toggle == "True" else "Disabled"
-
         await query.answer(f"{setting} {toggle} Successfully", show_alert=True)
-
     except Exception as e:
         logging.error("Errors occurred while updating user information", exc_info=True)
 
@@ -50,14 +47,10 @@ async def give_access_handler(c:Client,query: CallbackQuery):
         if IS_PRIVATE:
             user_id = int(query.data.split("#")[1])
             user = await get_user(user_id)
-
             if user["has_access"] and is_user_verified(user_id):
                 return query.answer("User already have access", show_alert=True)
-
             update = await update_user_info(user_id, {"has_access": True, "last_verified":datetime.now()})
-
             txt = await query.edit_message_text("User has been accepted successfully")
-
             return await c.send_message(user_id, f"You have been authenticated by Admin. Now you can use this bot for {VERIFIED_TIME} days. Hit /help for more information")
         else:
             query.answer("Bot is Public", show_alert=True)

@@ -4,16 +4,19 @@ from utils import direct_gen_handler, extract_link, file_store_handler, main_con
 from config import ADMINS, DIRECT_GEN, FILE_STORE, IS_PRIVATE, base_sites
 from database.users import get_user, is_user_verified, update_user_info
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
-from helpers import temp
 import logging
 
 logger = logging.getLogger(__name__)
-
 
 # Private Chat
 @Client.on_message(filters.private & filters.incoming)
 async def private_link_handler(c:Client, message:Message):
     user = await get_user(message.from_user.id)
+
+    try:
+        user['is_pvt_link']
+    except KeyError:
+        await update_user_info(message.from_user.id, {"pvt_link":None, "is_pvt_link":False})
 
     if FILE_STORE and (message.video or message.document or message.audio):
         await file_store_handler(message, user)

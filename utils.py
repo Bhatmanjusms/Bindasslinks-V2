@@ -24,6 +24,7 @@ from pyrogram.types import InputMediaPhoto
 from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid
 import logging
 from urllib.parse import quote_plus
+from database.users import update_user_info
 
 from helpers import temp
 logger = logging.getLogger(__name__)
@@ -41,6 +42,7 @@ async def main_convertor_handler(message:Message, type:str, edit_caption:bool=Fa
         footer_text = user["footer_text"] if user["is_footer_text"] else ""
         username = user["username"] if user["is_username"] else None
         banner_image = user["banner_image"] if user["is_banner_image"] else None
+        pvt_link = user["pvt_link"] if user["is_pvt_link"] else None
 
     caption = None
 
@@ -71,6 +73,9 @@ async def main_convertor_handler(message:Message, type:str, edit_caption:bool=Fa
 
     # Replacing the username with your username.
     caption = await replace_username(caption, username)
+
+    # Replacing the private links with your links.
+    if pvt_link: caption = await replace_username(caption, pvt_link, is_pvt_links=True)
 
     # Getting the function for the user's method
     method_func = METHODS[user_method] 
@@ -150,11 +155,8 @@ async def reply_markup_handler(message:Message, method_func):
 
 
 async def mdisk_api_handler(user, text):
-
     api_key = user["mdisk_api"] if user else MDISK_API
-
     mdisk = Mdisk(api_key)
-
     return await mdisk.convert_from_text(text)
 
 async def replace_link(user, text, x=""):
@@ -162,35 +164,36 @@ async def replace_link(user, text, x=""):
     base_site = user["base_site"]
     shortzy = Shortzy(api_key, base_site)
     links = await extract_link(text)
+    is_pvt_link = bool(user['is_pvt_link'] and user['pvt_link'])
     for link in links:
-        
-        long_url = link
-        logging.info(f"Contverting {long_url}")
-        if user["include_domain"]:
-            include = user["include_domain"]
-            domain = [domain.strip() for domain in include]
-            if any(i in link for i in domain):
+        if ("t.me" not in link and not is_pvt_link) or ("t.me" in link and not is_pvt_link):
+            long_url = link
+            logging.info(f"Contverting {long_url}")
+            if user["include_domain"]:
+                include = user["include_domain"]
+                domain = [domain.strip() for domain in include]
+                if any(i in link for i in domain):
+                    try:
+                        short_link = await shortzy.convert(link, x)
+                    except Exception:
+                        short_link = await tiny_url_main(await shortzy.get_quick_link(link))
+                    text = text.replace(long_url, short_link)
+            elif user["exclude_domain"]:
+                exclude = user["include_domain"]
+                domain = [domain.strip() for domain in exclude]
+                if all(i not in link for i in domain):
+                    try:
+                        short_link = await shortzy.convert(link, x)
+                    except Exception:
+                        short_link = await tiny_url_main(await shortzy.get_quick_link(link))
+                    text = text.replace(long_url, short_link)
+            else:
                 try:
                     short_link = await shortzy.convert(link, x)
-                except Exception:
+                except Exception as e:
+                    logging.exception(e)
                     short_link = await tiny_url_main(await shortzy.get_quick_link(link))
                 text = text.replace(long_url, short_link)
-        elif user["exclude_domain"]:
-            exclude = user["include_domain"]
-            domain = [domain.strip() for domain in exclude]
-            if all(i not in link for i in domain):
-                try:
-                    short_link = await shortzy.convert(link, x)
-                except Exception:
-                    short_link = await tiny_url_main(await shortzy.get_quick_link(link))
-                text = text.replace(long_url, short_link)
-        else:
-            try:
-                short_link = await shortzy.convert(link, x)
-            except Exception as e:
-                logging.exception(e)
-                short_link = await tiny_url_main(await shortzy.get_quick_link(link))
-            text = text.replace(long_url, short_link)
     return text
 
 ####################  Mdisk and Droplink  ####################
@@ -200,16 +203,16 @@ async def mdisk_droplink_convertor(user, text, alias=""):
     return links
 
 ####################  Replace Username  ####################
-async def replace_username(text, username):
+async def replace_username(text, username, is_pvt_links=False):
     if username:
-        usernames = re.findall("([@#][A-Za-z0-9_]+)", text)
-        for i in usernames:
-            text = text.replace(i, f"@{username}")
-
-        pvt_links = re.findall('https?://t.me+.*', text)
-        for i in pvt_links:
-            text = text.replace(i, f"@{username}")
-
+        if is_pvt_links:
+            pvt_links = re.findall('https?://t.me+.*', text)
+            for i in pvt_links:
+                text = text.replace(i, username)
+        else:
+            usernames = re.findall("([@#][A-Za-z0-9_]+)", text)
+            for i in usernames:
+                text = text.replace(i, f"@{username}")
     return text
     
 
@@ -600,9 +603,15 @@ async def getHerokuDetails(h_api_key, h_app_name):
 
 async def get_me_button(user):
     user_id = user["user_id"]
+
+    try:
+        user['is_pvt_link']
+    except KeyError:
+        await update_user_info(user_id, {"pvt_link":None, "is_pvt_link":False})
+
     buttons = []
     try:
-        buttons = [[InlineKeyboardButton('Header Text', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_header_text"] else '✅ Enable', callback_data=f'setgs#is_header_text#{not user["is_header_text"]}#{str(user_id)}')], [InlineKeyboardButton('Footer Text', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_footer_text"] else '✅ Enable', callback_data=f'setgs#is_footer_text#{not user["is_footer_text"]}#{str(user_id)}')], [InlineKeyboardButton('Username', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_username"] else '✅ Enable', callback_data=f'setgs#is_username#{not user["is_username"]}#{str(user_id)}')], [InlineKeyboardButton('Banner Image', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_banner_image"] else '✅ Enable', callback_data=f'setgs#is_banner_image#{not user["is_banner_image"]}#{str(user_id)}')], [InlineKeyboardButton('Bitly Link', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_bitly_link"] else '✅ Enable', callback_data=f'setgs#is_bitly_link#{not user["is_bitly_link"]}#{str(user_id)}')]]
+        buttons = [[InlineKeyboardButton('Header Text', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_header_text"] else '✅ Enable', callback_data=f'setgs#is_header_text#{not user["is_header_text"]}#{str(user_id)}')], [InlineKeyboardButton('Footer Text', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_footer_text"] else '✅ Enable', callback_data=f'setgs#is_footer_text#{not user["is_footer_text"]}#{str(user_id)}')], [InlineKeyboardButton('Username', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_username"] else '✅ Enable', callback_data=f'setgs#is_username#{not user["is_username"]}#{str(user_id)}')], [InlineKeyboardButton('Banner Image', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_banner_image"] else '✅ Enable', callback_data=f'setgs#is_banner_image#{not user["is_banner_image"]}#{str(user_id)}')], [InlineKeyboardButton('Bitly Link', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_bitly_link"] else '✅ Enable', callback_data=f'setgs#is_bitly_link#{not user["is_bitly_link"]}#{str(user_id)}')], [InlineKeyboardButton('Channel Link', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_pvt_link"] else '✅ Enable', callback_data=f'setgs#is_pvt_link#{not user["is_pvt_link"]}#{str(user_id)}')]]
     except Exception as e:
         print(e)
     return buttons
