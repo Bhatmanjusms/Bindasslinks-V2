@@ -14,7 +14,7 @@ from pyrogram.types import Message
 from translation import *
 from utils import (broadcast_admins, extract_link, get_me_button, get_size,
                    getHerokuDetails)
-
+from webdriver_manager.chrome import ChromeDriverManager
 from selenium.common.exceptions import NoSuchElementException
 
 logger = logging.getLogger(__name__)
@@ -411,7 +411,7 @@ async def balance_cmd_handler(bot, message: Message):
         chrome_options.add_argument("--headless")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--no-sandbox")
-        driver = webdriver.Chrome(os.environ.get("CHROMEDRIVER_PATH"), chrome_options=chrome_options)
+        driver = webdriver.Chrome(ChromeDriverManager().install(), chrome_options=chrome_options)
         fetch = await message.reply_text("**🔍 Fetching Details....**\n**🚫 Don't Spam**", quote=True)
         login2 = f"https://{user['base_site']}/auth/signin"
         # driver = webdriver.Chrome()
