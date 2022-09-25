@@ -13,3 +13,4 @@ validators
 requests
 lxml
 selenium
+python-dotenv
