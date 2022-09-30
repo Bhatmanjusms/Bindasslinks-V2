@@ -308,7 +308,35 @@ async def base_site_handler(bot, m:Message):
 async def features(bot, message):
     await message.reply(
         f"**Hello, {message.chat.first_name}!**\n\n"
-      "**/start - To check i am alive \n\n /help - to get help from me \n\n /method - to sellect your method of shorting \n\n/shortner_api - connect your bindaaslink api to short malti links \n\n /mdisk_api - connect your mdisk api for convert others mdisk to your mdisk+bindaaslink \n\n /bitly_api - your shorted links convert to bitly \n\n /username - to replace others username to your username \n\n /header - to add text or link in the head of poster \n\n /footer - to add text or links in the end of poster \n\n /banner_image - it can replace image from your post \n\n /settings - this command shows your status \n\n /about - to check about bot \n\n /site to know about Bindaaslinks.com \n\n HAVE A NICE DAY **")     
+      "**💠 Features Of LinkShortify Robot 💠
+
+❤️ It's A User Friendly Bot ❤️
+
+➡️ Use Can Short Bulk Links Into Your LinkShortify Account With This Bot
+
+➡️ You Can Also Short Links With Custom Alias
+
+➡️ You Can Also Use Mdisk Links To Short It Into Your Mdisk Account And Then LinkShortify Account
+
+➡️ You Can Set Custom Header
+
+➡️ You Can Set Custom Footer
+
+➡️ You Can Set Custom Banner Image
+
+➡️ You Can Chage Telegram Username & Channel Link To Yours
+
+➡️ You Can Use Bitly To Short LinkShortify Link
+
+➡️ You Can Chose Different Link Short Methods
+
+➡️ You Can Use Settings Section To Manage All Things At One Place
+
+➡️ You Can Send File To Bot And Bot Will Give You Different LinkShortify Links & It Will Be Usable To Download File Directly, Streaming It Online & Download File From File To Link Bot
+
+➡️ You Can Change Other LinkShortify Links To Your LinkShortify Account Links
+
+⚠️ If You Need More Help Then Message Us At @BrixFlySupport**")     
 
 @Client.on_message(filters.command('site') & filters.private )
 async def site(bot, message):
