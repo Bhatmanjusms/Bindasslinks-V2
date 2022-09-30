@@ -308,35 +308,7 @@ async def base_site_handler(bot, m:Message):
 async def features(bot, message):
     await message.reply(
         f"**Hello, {message.chat.first_name}!**\n\n"
-      "**💠 Features Of LinkShortify Robot 💠
-
-❤️ It's A User Friendly Bot ❤️
-
-➡️ Use Can Short Bulk Links Into Your LinkShortify Account With This Bot
-
-➡️ You Can Also Short Links With Custom Alias
-
-➡️ You Can Also Use Mdisk Links To Short It Into Your Mdisk Account And Then LinkShortify Account
-
-➡️ You Can Set Custom Header
-
-➡️ You Can Set Custom Footer
-
-➡️ You Can Set Custom Banner Image
-
-➡️ You Can Chage Telegram Username & Channel Link To Yours
-
-➡️ You Can Use Bitly To Short LinkShortify Link
-
-➡️ You Can Chose Different Link Short Methods
-
-➡️ You Can Use Settings Section To Manage All Things At One Place
-
-➡️ You Can Send File To Bot And Bot Will Give You Different LinkShortify Links & It Will Be Usable To Download File Directly, Streaming It Online & Download File From File To Link Bot
-
-➡️ You Can Change Other LinkShortify Links To Your LinkShortify Account Links
-
-⚠️ If You Need More Help Then Message Us At @BrixFlySupport**")     
+      "**💠 Features Of LinkShortify Robot 💠\n\n❤️ It's A User Friendly Bot ❤️\n\n➡️ Use Can Short Bulk Links Into Your LinkShortify Account With This Bot\n\n➡️ You Can Also Short Links With Custom Alias\n\n➡️ You Can Also Use Mdisk Links To Short It Into Your Mdisk Account And Then LinkShortify Account\n\n➡️ You Can Set Custom Header\n\n➡️ You Can Set Custom Footer\n\n➡️ You Can Set Custom Banner Image\n\n➡️ You Can Chage Telegram Username & Channel Link To Yours\n\n➡️ You Can Use Bitly To Short LinkShortify Link\n\n➡️ You Can Chose Different Link Short Methods\n\n➡️ You Can Use Settings Section To Manage All Things At One Place\n\n➡️ You Can Send File To Bot And Bot Will Give You Different LinkShortify Links & It Will Be Usable To Download File Directly, Streaming It Online & Download File From File To Link Bot\n\n➡️ You Can Change Other LinkShortify Links To Your LinkShortify Account Links\n\n⚠️ If You Need More Help Then Message Us At @BrixFlySupport**")     
 
 @Client.on_message(filters.command('site') & filters.private )
 async def site(bot, message):
