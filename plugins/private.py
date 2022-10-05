@@ -74,7 +74,7 @@ async def private_link_handler(c:Client, message:Message):
         if vld is not True: return await message.reply_text(vld)
 
         try:
-            txt = await message.reply('`Cooking... converting your links to bindaaslinks...↪️`', quote=True)
+            txt = await message.reply('`🔗 Cooking Your Links So Please Wait . . . `', quote=True)
             await main_convertor_handler(message, user_method, user=user)
 
             if message.caption:
