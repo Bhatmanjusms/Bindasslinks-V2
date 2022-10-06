@@ -53,22 +53,21 @@ Hey! My name is {firstname}. I am a Link Convertor and Shortener Bot, here to ma
 IF You need More HeLp Then Contact @BindaasLinksIndia ♥️**'''
 HELP_MESSAGE =  os.environ.get('HELP_MESSAGE', HELP_MESSAGE)
 
-ABOUT_TEXT = """**
-👉Know More:
+ABOUT_TEXT = """**👉Know More: 
 
 ➲🤖 ʙᴏᴛ ɴᴀᴍᴇ  :  {} 
 
-➲✅ sɪᴛᴇ ɴᴀᴍᴇ : BINDAASLINKS.COM
+➲✅ sɪᴛᴇ ɴᴀᴍᴇ : Earnl.site
 
-➲📢 ᴏғғɪᴄɪᴀʟ ᴄʜᴀɴɴᴇʟ : [ᴄʟɪᴄᴋ ʜᴇʀᴇ](https://telegram.me/bindaaslinks)
+➲📢 ᴏғғɪᴄɪᴀʟ ᴄʜᴀɴɴᴇʟ : [ᴄʟɪᴄᴋ ʜᴇʀᴇ](https://telegram.me/EarnlWeb)
 
-➲🤑 ᴄᴜʀʀᴇɴᴛ ᴄᴘᴍ : [ᴄʟɪᴄᴋ ʜᴇʀᴇ](https://bindaaslinks.com/payout-rates)
+➲🤑 ᴄᴜʀʀᴇɴᴛ ᴄᴘᴍ : [ᴄʟɪᴄᴋ ʜᴇʀᴇ](https://earnl.site/payout-rates)
 
-➲☎️ ᴄᴏɴᴛᴀᴄᴛ sᴜᴘᴘᴏʀᴛ : [ᴄʟɪᴄᴋ ʜᴇʀᴇ](https://t.me/BindaasLinksIndia)
+➲☎️ ᴄᴏɴᴛᴀᴄᴛ sᴜᴘᴘᴏʀᴛ : [ᴄʟɪᴄᴋ ʜᴇʀᴇ](https://t.me/earnl_admin)
 
 ➲👨‍💻 ʙᴏᴛ ᴅᴇᴠᴇʟᴏᴘᴇʀ : [ᴄʟɪᴄᴋ ʜᴇʀᴇ](http://t.me/CR_0O0)
 
-sᴏ ɴᴏᴡ sᴇɴᴅ ᴍᴇ ᴛʜᴇ ʟɪɴᴋs, ɪ ᴡɪʟʟ ᴄᴏɴᴠᴇʀᴛ ɪᴛ ᴀɴᴅ ɢɪᴠᴇ ɪᴛ ᴛᴏ ʏᴏᴜ 😊    
+sᴏ ɴᴏᴡ sᴇɴᴅ ᴍᴇ ᴛʜᴇ ʟɪɴᴋs, ɪ ᴡɪʟʟ ᴄᴏɴᴠᴇʀᴛ ɪᴛ ᴀɴᴅ ɢɪᴠᴇ ɪᴛ ᴛᴏ ʏᴏᴜ 😊  ɪғ ʏᴏᴜ ɴᴇᴇᴅ sᴀᴍᴇ ʙᴏᴛ ᴛᴏ ʏᴏᴜ'ʀᴇ sʜᴏʀᴛɴᴇʀ ᴛʜᴇɴ ᴄᴏɴᴛᴀᴄᴛ @CR_0O0
 **"""
 ABOUT_TEXT =  os.environ.get('ABOUT_MESSAGE', ABOUT_TEXT)
 
