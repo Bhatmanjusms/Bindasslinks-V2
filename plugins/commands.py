@@ -2,9 +2,9 @@
 import datetime
 import logging
 
-from config import (ADMINS, BASE_SITE, HEROKU, HEROKU_API_KEY, HEROKU_APP_NAME,
-                    INCLUDE_DOMAIN, IS_DEFAULT_BASE_SITE, IS_PRIVATE,
-                    LOG_CHANNEL, SOURCE_CODE, WELCOME_IMAGE, base_sites)
+from config import (ADMINS, DIRECT_GEN, FILE_STORE, HEROKU, HEROKU_API_KEY,
+                    HEROKU_APP_NAME, IS_PRIVATE, LOG_CHANNEL, SOURCE_CODE,
+                    WELCOME_IMAGE, base_sites)
 from database import db
 from database.users import (get_user, is_user_exist, total_users_count,
                             update_user_info)
@@ -12,9 +12,8 @@ from helpers import temp
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from translation import *
-from utils import (broadcast_admins, extract_link, get_me_button, get_size,
+from utils import (direct_gen_handler, extract_link, file_store_handler, get_me_button, get_size,
                    getHerokuDetails)
-
 
 logger = logging.getLogger(__name__)
 
@@ -98,6 +97,31 @@ async def restart_handler(c: Client, m:Message):
     RESTARTE_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Sure', callback_data='restart'), InlineKeyboardButton('Disable', callback_data='delete')]])
     await m.reply("Are you sure you want to restart / re-deploy the server?", reply_markup=RESTARTE_MARKUP)
 
+
+@Client.on_message(filters.command('direct_download_link') & filters.private)
+async def direct_link_gen_cmd_handler(c: Client, m:Message):
+    try:
+        if DIRECT_GEN and (m.video or m.document or m.audio):
+            user = await get_user(m.from_user.id)
+            await direct_gen_handler(c, m, user, "direct")
+    except Exception as e:
+        logging.exception(e, exc_info=True)
+
+@Client.on_message(filters.command('stream_link') & filters.private)
+async def stream_link_gen_cmd_handler(c: Client, m:Message):
+    try:
+        if DIRECT_GEN and (m.video or m.document or m.audio):
+            user = await get_user(m.from_user.id)
+            await direct_gen_handler(c, m, user, "stream")
+    except Exception as e:
+        logging.exception(e, exc_info=True)
+
+@Client.on_message(filters.command('file_store_link') & filters.private)
+async def file_store_cmd_handler(c: Client, m:Message):
+    if FILE_STORE and (m.video or m.document or m.audio):
+        user = await get_user(m.from_user.id)
+        await file_store_handler(m, user)
+        return
 
 @Client.on_message(filters.command('stats') & filters.user(ADMINS) & filters.private)
 async def stats_handler(c: Client, m:Message):

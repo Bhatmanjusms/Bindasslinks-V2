@@ -80,9 +80,7 @@ IS_URLEARN_XYZ = is_enabled(os.environ.get("IS_URLEARN_XYZ", "True"), "True")
 stream_msg_text ="""
 <u>**Successfully Generated Your Link !**</u>\n
 <b>📂 File Name :</b> {}\n
-<b>📦 File Size :</b> {}\n
-<b>📥 Download :</b> {}\n
-<b>🖥 Watch :<//b> {}"""
+<b>📦 File Size :</b> {}\n"""
 
 
 BASE_SITE_2 = os.environ.get('BASE_SITE_2', None)

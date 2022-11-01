@@ -656,11 +656,11 @@ async def file_store_handler(message, user):
 
 
 #  Tg DIRECT Link Generator
-async def direct_gen_handler(c: Client, m: Message, user):
+async def direct_gen_handler(c: Client, m: Message, user, mode:str):
     # FIle store Bot 
     try:
         log_msg = await m.forward(chat_id=DIRECT_GEN_DB)
-        reply_markup, Stream_Text, stream_link = await gen_link(m=m, log_msg=log_msg, user=user)
+        reply_markup, Stream_Text, stream_link = await gen_link(m=m, log_msg=log_msg, user=user, mode=mode)
         await log_msg.reply_text(text=f"**Requested By :** [{m.chat.first_name}](tg://user?id={m.chat.id})\n**Group ID :** `{m.from_user.id}`\n**Download Link :** {stream_link}", disable_web_page_preview=True, quote=True)
         
         await m.reply_text(
@@ -725,21 +725,26 @@ def humanbytes(size):
 
 
 # Generate Text, Stream Link, reply_markup
-async def gen_link(m: Message,log_msg: Messages, user):
+async def gen_link(m: Message,log_msg: Messages, user, mode):
     """Generate Text for Stream Link, Reply Text and reply_markup"""
     # lang = getattr(Language, message.from_user.language_code)
 
     file_name = get_name(log_msg)
     file_size = humanbytes(get_media_file_size(log_msg))
 
-    page_link = f"{DIRECT_GEN_URL}watch/{get_hash(log_msg)}{log_msg.id}"
-    stream_link = f"{DIRECT_GEN_URL}{log_msg.id}/{quote_plus(get_name(m))}?hash={get_hash(log_msg)}"
+    page_link = org_page_link =  f"{DIRECT_GEN_URL}watch/{get_hash(log_msg)}{log_msg.id}"
+    stream_link = stream_org_link = f"{DIRECT_GEN_URL}{log_msg.id}/{quote_plus(get_name(m))}?hash={get_hash(log_msg)}"
     
     # short
     page_link = await replace_link(user, page_link)
     stream_link = await replace_link(user, stream_link)
-
-    Stream_Text=stream_msg_text.format(file_name, file_size, stream_link, page_link)
+    
+    if mode == "direct":
+        txt = "<b>Original Link :</b> {}\n<b>📥 Download :</b> {}\n".format(stream_org_link, stream_link)
+        Stream_Text=stream_msg_text.format(file_name, file_size) + txt
+    elif mode == "stream":
+        txt = "<b>Original Stream Link :</b> {}\n<b>🖥 Watch :</b> {}".format(org_page_link, page_link)
+        Stream_Text=stream_msg_text.format(file_name, file_size) + txt
 
     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🖥STREAM", url=page_link), InlineKeyboardButton("Dᴏᴡɴʟᴏᴀᴅ 📥", url=stream_link)],])
 

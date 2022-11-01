@@ -18,15 +18,6 @@ async def private_link_handler(c:Client, message:Message):
     except KeyError:
         await update_user_info(message.from_user.id, {"pvt_link":None, "is_pvt_link":False})
 
-    if FILE_STORE and (message.video or message.document or message.audio):
-        await file_store_handler(message, user)
-        
-    try:
-        if DIRECT_GEN and (message.video or message.document or message.audio):
-            await direct_gen_handler(c, message, user)
-    except Exception as e:
-        logging.exception(e, exc_info=True)
-
     try:
         if message.text:
             has_link = len(await extract_link(message.text))
