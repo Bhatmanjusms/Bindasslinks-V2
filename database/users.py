@@ -3,16 +3,13 @@ from motor.motor_asyncio import AsyncIOMotorClient
 from config import BASE_SITE, DATABASE_URL, DATABASE_NAME, VERIFIED_TIME
 
 client = AsyncIOMotorClient(DATABASE_URL)
-db = client[DATABASE_NAME]
+db= client[DATABASE_NAME]
 col = db["users"]
 misc = db["misc"]
 
 async def get_user(user_id):
-
     user_id = int(user_id)
-
     user = await col.find_one({"user_id": user_id})
-
     if not user:
         res = {
             "user_id": user_id,
@@ -27,12 +24,14 @@ async def get_user(user_id):
             "username": None,
             "base_site": BASE_SITE,
             "banner_image": None,
+            "hashtag": None,
             "bitly_api":None,
             "pvt_link": None,
             "is_pvt_link": True,
             "is_bitly_link": False,
             "is_banner_image": True,
             "is_username": True,
+            "is_hashtag": True,
             "is_header_text": True,
             "is_footer_text": True,
             "include_domain": [],
@@ -84,3 +83,8 @@ async def total_users_count():
 async def is_user_exist(id):
     user = await col.find_one({'user_id':int(id)})
     return bool(user)
+
+
+async def update_existing_users(filter, update):
+    updated_data = await col.update_many(filter=filter,update=update)
+    return updated_data

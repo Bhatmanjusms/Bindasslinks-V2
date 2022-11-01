@@ -4,6 +4,7 @@ import sys
 from pyrogram import Client
 from config import *
 from database import db
+from database.users import update_existing_users
 from helpers import temp, ping_server
 from utils import broadcast_admins
 
@@ -73,9 +74,13 @@ class Bot(Client):
         if not await db.get_bot_stats():
             await db.create_stats()
 
+        # update col for existing users
+        filters = {'is_hashtag': {"$exists" : False},'hashtag': {"$exists" : False}}
+        update = {"$set": {'is_hashtag': True, 'hashtag': None}}
+        await update_existing_users(filters, update)
+        
         if FILE_STORE:
             try:
-                
                 db_channel = await self.get_chat(FILE_STORE_DB)
                 temp.DB_CHANNEL = db_channel
                 test = await self.send_message(chat_id = db_channel.id, text = "Test Message")

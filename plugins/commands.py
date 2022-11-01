@@ -1,9 +1,10 @@
 
 import datetime
+from email import message
 import logging
 
 from config import (ADMINS, DIRECT_GEN, FILE_STORE, HEROKU, HEROKU_API_KEY,
-                    HEROKU_APP_NAME, IS_PRIVATE, LOG_CHANNEL, SOURCE_CODE,
+                    HEROKU_APP_NAME, IS_PRIVATE, LINK_BYPASS, LOG_CHANNEL, SOURCE_CODE,
                     WELCOME_IMAGE, base_sites)
 from database import db
 from database.users import (get_user, is_user_exist, total_users_count,
@@ -12,11 +13,11 @@ from helpers import temp
 from pyrogram import Client, filters
 from pyrogram.types import Message
 from translation import *
-from utils import (direct_gen_handler, extract_link, file_store_handler, get_me_button, get_size,
+from utils import (direct_gen_handler, droplink_bypass_handler, extract_link, file_store_handler, get_me_button, get_size,
                    getHerokuDetails)
 
-logger = logging.getLogger(__name__)
 
+logging.getLogger().setLevel(logging.INFO)
 
 avl_web1 = "".join(f"- {i}\n" for i in base_sites)
 
@@ -50,7 +51,7 @@ async def start(c:Client, m:Message):
         t = START_MESSAGE.format(m.from_user.mention, new_user["method"], new_user["base_site"])
 
         if WELCOME_IMAGE:
-            return await m.reply_photo(photo=WELCOME_IMAGE, caption=t, reply_markup=START_MESSAGE_REPLY_MARKUP, disable_web_page_preview=True)
+            return await m.reply_photo(photo=WELCOME_IMAGE, caption=t, reply_markup=START_MESSAGE_REPLY_MARKUP)
         await m.reply_text(t, reply_markup=START_MESSAGE_REPLY_MARKUP, disable_web_page_preview=True)
     except Exception as e:
         logging.error(e)
@@ -122,6 +123,16 @@ async def file_store_cmd_handler(c: Client, m:Message):
         user = await get_user(m.from_user.id)
         await file_store_handler(m, user)
         return
+
+@Client.on_message(filters.command('bypass') & filters.private)
+async def bypass_cmd_handler(c: Client, m:Message):
+    if not LINK_BYPASS:
+        await m.reply("Link Bypass has been disabled by the admins")
+        return
+    ediatble = await m.reply("`Processing...`", disable_web_page_preview=True, quote=True)
+    caption = m.reply_to_message.text.html or m.reply_to_message.caption.html
+    bypassed_text = await droplink_bypass_handler(caption)
+    await ediatble.edit(bypassed_text, disable_web_page_preview=True)
 
 @Client.on_message(filters.command('stats') & filters.user(ADMINS) & filters.private)
 async def stats_handler(c: Client, m:Message):
@@ -270,6 +281,23 @@ async def username_handler(bot, m: Message):
             await update_user_info(user_id, {"username": username})
             await m.reply(f"Username updated successfully to {username}")
 
+@Client.on_message(filters.command('hashtag') & filters.private)
+async def hashtag_handler(bot, m: Message):
+    user_id = m.from_user.id
+    user = await get_user(user_id)
+    cmd = m.command
+    if len(cmd) == 1:
+        hashtag = user["hashtag"] or None
+        return await m.reply(HASHTAG_TEXT.format(hashtag=hashtag))
+    elif len(cmd) == 2:
+        if "remove" in cmd:
+            await update_user_info(user_id, {"hashtag": ""})
+            return await m.reply("Hashtag Successfully Removed")
+        else:
+            hashtag = cmd[1].strip().replace("#", "")
+            await update_user_info(user_id, {"hashtag": hashtag})
+            await m.reply(f"Hashtag updated successfully to {hashtag}")
+
 @Client.on_message(filters.command('channel_link') & filters.private)
 async def pvt_links_handler(bot, m: Message):
     user_id = m.from_user.id
@@ -299,7 +327,6 @@ async def banner_image_handler(bot, m:Message):
     if len(cmd) == 1:
         if not m.reply_to_message or not m.reply_to_message.photo:
             return await m.reply_photo(user["banner_image"], caption=BANNER_IMAGE) if user["banner_image"] else await m.reply("Current Banner Image URL: None\n" + BANNER_IMAGE)
-
         # Getting the file_id of the photo that was sent to the bot.
         fileid = m.reply_to_message.photo.file_id
         await update_user_info(user_id, {"banner_image": fileid})
@@ -347,7 +374,7 @@ async def settings_cmd_handler(bot, m:Message):
 
     user_id = m.from_user.id
     user = await get_user(user_id)
-    res = USER_ABOUT_MESSAGE.format(base_site=user["base_site"], method=user["method"], shortener_api=user["shortener_api"], mdisk_api=user["mdisk_api"], username=user["username"], header_text=user["header_text"] or None, footer_text=user["footer_text"] or None, banner_image=user["banner_image"], bitly_api=user["bitly_api"],channel_link=user['pvt_link'])
+    res = USER_ABOUT_MESSAGE.format(base_site=user["base_site"], method=user["method"], shortener_api=user["shortener_api"], mdisk_api=user["mdisk_api"], username=user["username"], header_text=user["header_text"] or None, footer_text=user["footer_text"] or None, banner_image=user["banner_image"], bitly_api=user["bitly_api"],channel_link=user['pvt_link'], hashtag=user['hashtag'])
 
     buttons = await get_me_button(user)
     reply_markup = InlineKeyboardMarkup(buttons)
@@ -359,9 +386,7 @@ async def settings_cmd_handler(bot, m:Message):
 async def include_domain_handler(bot, m:Message):
     user = get_user(m.from_user.id)
     inc_domain = user["include_domain"]
-
     tdl = "".join(f"- {i}\n" for i in inc_domain)
-
     if len(m.command) <= 1:
         return m.reply(INCLUDE_DOMAIN_TEXT.format(tdl))
 

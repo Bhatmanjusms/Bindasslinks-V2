@@ -40,5 +40,4 @@ class Database:
         return await self.stats.update_one(myquery, newvalues)
 
 
-
 db = Database(DATABASE_URL, DATABASE_NAME)

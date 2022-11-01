@@ -47,14 +47,12 @@ class Helpers:
     @property
     async def user_method(self):
         user_method = await database.db.get_bot_method(self.username)
-        if user_method:
-            return user_method
-        return "None"
+        return user_method or "None"
 
     @property
     async def get_included_domain(self):
-        x=''
         if INCLUDE_DOMAIN:   
+            x=''
             async for i in AsyncIter(INCLUDE_DOMAIN):
                 x+= f"- `{i}`"
             return x
@@ -62,8 +60,8 @@ class Helpers:
 
     @property
     async def get_excluded_domain(self):
-        x=''
         if EXCLUDE_DOMAIN:   
+            x=''
             async for i in AsyncIter(EXCLUDE_DOMAIN):
                 x+= f"- `{i}`\n"
             return x
@@ -71,8 +69,8 @@ class Helpers:
 
     @property
     async def get_channels(self):
-        x=''
         if CHANNELS:   
+            x=''
             async for i in AsyncIter(CHANNEL_ID):
                 x+= f"~ `{i}`\n"
             return x
@@ -87,13 +85,11 @@ class Helpers:
         
     @property
     async def header_text(self):
-        if HEADER_TEXT:return HEADER_TEXT
-        return "No Header Text"
+        return HEADER_TEXT or "No Header Text"
         
     @property
     async def footer_text(self):
-        if FOOTER_TEXT:return FOOTER_TEXT
-        return "No Footer Text"
+        return FOOTER_TEXT or "No Footer Text"
 
     @property
     async def get_username(self):
@@ -107,10 +103,10 @@ async def ping_server():
         await asyncio.sleep(sleep_time)
         try:
             async with aiohttp.ClientSession(
-                timeout=aiohttp.ClientTimeout(total=10)
-            ) as session:
+                            timeout=aiohttp.ClientTimeout(total=10)
+                        ) as session:
                 async with session.get(REPLIT) as resp:
-                    logging.info("Pinged server with response: {}".format(resp.status))
+                    logging.info(f"Pinged server with response: {resp.status}")
         except TimeoutError:
             logging.warning("Couldn't connect to the site URL..!")
         except Exception:

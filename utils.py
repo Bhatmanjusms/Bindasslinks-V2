@@ -33,6 +33,7 @@ logger.setLevel(logging.ERROR)
 
 async def main_convertor_handler(message:Message, type:str, edit_caption:bool=False, user=None):
     username = USERNAME
+    hashtag = HASHTAG
     header_text = HEADER_TEXT
     footer_text = FOOTER_TEXT
     banner_image = BANNER_IMAGE
@@ -40,6 +41,7 @@ async def main_convertor_handler(message:Message, type:str, edit_caption:bool=Fa
     if user:
         header_text = user["header_text"] if user["is_header_text"] else ""
         footer_text = user["footer_text"] if user["is_footer_text"] else ""
+        hashtag = user["hashtag"] if user["is_hashtag"] else None
         username = user["username"] if user["is_username"] else None
         banner_image = user["banner_image"] if user["is_banner_image"] else None
         pvt_link = user["pvt_link"] if user["is_pvt_link"] else None
@@ -73,6 +75,9 @@ async def main_convertor_handler(message:Message, type:str, edit_caption:bool=Fa
 
     # Replacing the username with your username.
     caption = await replace_username(caption, username)
+
+    # Replacing the hashtag with your hashtag.
+    caption = await replace_hashtag(caption, hashtag)
 
     # Replacing the private links with your links.
     if pvt_link: caption = await replace_username(caption, pvt_link, is_pvt_links=True)
@@ -210,11 +215,18 @@ async def replace_username(text, username, is_pvt_links=False):
             for i in pvt_links:
                 text = text.replace(i, username)
         else:
-            usernames = re.findall("([@#][A-Za-z0-9_]+)", text)
+            usernames = re.findall("([@][A-Za-z0-9_]+)", text)
             for i in usernames:
                 text = text.replace(i, f"@{username}")
     return text
-    
+
+####################  Replace hashtag  ####################
+async def replace_hashtag(text, hashtag):
+    if hashtag:
+        hashtags = re.findall("([#][A-Za-z0-9_]+)", text)
+        for i in hashtags:
+            text = text.replace(i, f"#{hashtag}")
+    return text
 
 #####################  Extract all urls in a string ####################
 async def extract_link(string):
@@ -361,7 +373,7 @@ async def easysky_bypass(url):
         return res['url']
 
     except Exception as e:
-        raise Exception("Error while bypassing droplink {0}: {1}".format(url, e))
+        raise Exception("Error while bypassing droplink {0}: {1}".format(url, e)) from e
 
 
 async def bindasslink_bypass(url):
@@ -476,6 +488,8 @@ async def broadcast_admins(c: Client, Message, sender=False):
             await c.send_message(i, Message)
         except PeerIdInvalid:
             logging.info(f"{i} have not yet started the bot")
+        except Exception as e:
+            logging.error(e)
     return
 
 async def get_size(size):
@@ -611,7 +625,7 @@ async def get_me_button(user):
 
     buttons = []
     try:
-        buttons = [[InlineKeyboardButton('Header Text', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_header_text"] else '✅ Enable', callback_data=f'setgs#is_header_text#{not user["is_header_text"]}#{str(user_id)}')], [InlineKeyboardButton('Footer Text', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_footer_text"] else '✅ Enable', callback_data=f'setgs#is_footer_text#{not user["is_footer_text"]}#{str(user_id)}')], [InlineKeyboardButton('Username', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_username"] else '✅ Enable', callback_data=f'setgs#is_username#{not user["is_username"]}#{str(user_id)}')], [InlineKeyboardButton('Banner Image', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_banner_image"] else '✅ Enable', callback_data=f'setgs#is_banner_image#{not user["is_banner_image"]}#{str(user_id)}')], [InlineKeyboardButton('Bitly Link', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_bitly_link"] else '✅ Enable', callback_data=f'setgs#is_bitly_link#{not user["is_bitly_link"]}#{str(user_id)}')], [InlineKeyboardButton('Channel Link', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_pvt_link"] else '✅ Enable', callback_data=f'setgs#is_pvt_link#{not user["is_pvt_link"]}#{str(user_id)}')]]
+        buttons = [[InlineKeyboardButton('Header Text', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_header_text"] else '✅ Enable', callback_data=f'setgs#is_header_text#{not user["is_header_text"]}#{str(user_id)}')], [InlineKeyboardButton('Footer Text', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_footer_text"] else '✅ Enable', callback_data=f'setgs#is_footer_text#{not user["is_footer_text"]}#{str(user_id)}')], [InlineKeyboardButton('Username', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_username"] else '✅ Enable', callback_data=f'setgs#is_username#{not user["is_username"]}#{str(user_id)}')], [InlineKeyboardButton('Banner Image', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_banner_image"] else '✅ Enable', callback_data=f'setgs#is_banner_image#{not user["is_banner_image"]}#{str(user_id)}')], [InlineKeyboardButton('Bitly Link', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_bitly_link"] else '✅ Enable', callback_data=f'setgs#is_bitly_link#{not user["is_bitly_link"]}#{str(user_id)}')], [InlineKeyboardButton('Channel Link', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_pvt_link"] else '✅ Enable', callback_data=f'setgs#is_pvt_link#{not user["is_pvt_link"]}#{str(user_id)}')],[InlineKeyboardButton('Hastag', callback_data='ident'), InlineKeyboardButton('❌ Disable' if user["is_hashtag"] else '✅ Enable', callback_data=f'setgs#is_hashtag#{not user["is_hashtag"]}#{str(user_id)}')]]
     except Exception as e:
         print(e)
     return buttons
@@ -734,13 +748,14 @@ async def gen_link(m: Message,log_msg: Messages, user, mode):
 
     page_link = org_page_link =  f"{DIRECT_GEN_URL}watch/{get_hash(log_msg)}{log_msg.id}"
     stream_link = stream_org_link = f"{DIRECT_GEN_URL}{log_msg.id}/{quote_plus(get_name(m))}?hash={get_hash(log_msg)}"
-    
+
     # short
     page_link = await replace_link(user, page_link)
     stream_link = await replace_link(user, stream_link)
-    
+
     if mode == "direct":
-        txt = "<b>Original Link :</b> {}\n<b>📥 Download :</b> {}\n".format(stream_org_link, stream_link)
+        txt = f"<b>Original Link :</b> {stream_org_link}\n<b>📥 Download :</b> {stream_link}\n"
+
         Stream_Text=stream_msg_text.format(file_name, file_size) + txt
     elif mode == "stream":
         txt = "<b>Original Stream Link :</b> {}\n<b>🖥 Watch :</b> {}".format(org_page_link, page_link)

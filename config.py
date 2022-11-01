@@ -32,6 +32,7 @@ CHANNEL_ID = [int(i.strip()) for i in os.environ.get("CHANNEL_ID").split(" ")] i
 FORWARD_MESSAGE = is_enabled((os.environ.get('FORWARD_MESSAGE', "False")), False)
 SOURCE_CODE = os.environ.get("SOURCE_CODE", "https://github.com/kevinnadar22/URL-Shortener-V2")
 USERNAME = os.environ.get("USERNAME", None)
+HASHTAG = os.environ.get("HASHTAG", None)
 HEADER_TEXT = os.environ.get("HEADER_TEXT", '')
 FOOTER_TEXT = os.environ.get("FOOTER_TEXT", '')
 BANNER_IMAGE = os.environ.get("BANNER_IMAGE", '')

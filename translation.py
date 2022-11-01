@@ -164,6 +164,8 @@ USER_ABOUT_MESSAGE = """**
 {footer_text}
 
 - ʙᴀɴɴᴇʀ ɪᴍᴀɢᴇ: {banner_image}
+
+- Hashtag: {hashtag}
 **"""
 USER_ABOUT_MESSAGE =  os.environ.get('USER_ABOUT_MESSAGE', USER_ABOUT_MESSAGE)
 
@@ -217,6 +219,18 @@ Example :- `/username @CR_0O0`
 
 To remove this username, `/username remove`**"""
 USERNAME_TEXT =  os.environ.get('USERNAME_MESSAGE', USERNAME_TEXT)
+
+HASHTAG_TEXT = """**Current Hashtag: {hashtag}
+
+Usage: `/hashtag your_hashtag`
+
+This hashtag will be automatically replaced with other hashtags in the post
+
+Example :- `/hashtag instagramdown` 
+
+To remove this hashtag, `/hashtag remove`**"""
+HASHTAG_TEXT =  os.environ.get('HASHTAG_MESSAGE', HASHTAG_TEXT)
+
 
 PVT_LINKS_TEXT = """"**Current Channel Links: {pvt_link}
 
