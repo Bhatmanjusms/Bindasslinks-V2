@@ -1,4 +1,4 @@
-from config import ADMINS, IS_PRIVATE
+from config import Config
 from database.users import get_user
 from pyrogram.filters import create
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
@@ -9,7 +9,7 @@ async def is_private_filter(_, __, m: Message):
     user = m.from_user.id
     has_access = (await get_user(user))["has_access"]
 
-    is_private = not bool(IS_PRIVATE)
+    is_private = not bool(Config.IS_PRIVATE)
 
     REPLY_MARKUP = InlineKeyboardMarkup([
         [
@@ -17,8 +17,9 @@ async def is_private_filter(_, __, m: Message):
         ],
 
     ])
-    if m.from_user.id not in ADMINS and IS_PRIVATE and not has_access :
-        await m.reply_text(f"This bot works only for authorized users. Request admin to use this bot" ,reply_markup=REPLY_MARKUP ,disable_web_page_preview=True)
+    if m.from_user.id not in Config.ADMINS and Config.IS_PRIVATE and not has_access:
+        await m.reply_text("This bot works only for authorized users. Request admin to use this bot", reply_markup=REPLY_MARKUP, disable_web_page_preview=True)
+
     else:
         return True
 

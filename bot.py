@@ -2,11 +2,11 @@ import datetime
 import asyncio
 import sys
 from pyrogram import Client
-from config import *
+from config import Config
 from database import db
 from database.users import update_existing_users
 from helpers import temp, ping_server
-from utils import broadcast_admins
+from utils import _update_existing_users, broadcast_admins, make_vars
 
 import logging
 import logging.config
@@ -16,7 +16,7 @@ logging.config.fileConfig('logging.conf')
 logging.getLogger().setLevel(logging.INFO)
 
 
-if REPLIT:
+if Config.REPLIT:
     from flask import Flask, jsonify
     from threading import Thread
     
@@ -32,7 +32,7 @@ if REPLIT:
         res = {
             "status":"running",
             "hosted":"replit.com",
-            "repl":REPLIT,
+            "repl":Config.REPLIT,
             "bot":temp.BOT_USERNAME,
             "runtime":runtime
         }
@@ -52,15 +52,15 @@ class Bot(Client):
     def __init__(self):
         super().__init__(
         "shortener",
-        api_id=API_ID,
-        api_hash=API_HASH,
-        bot_token=BOT_TOKEN,
+        api_id=Config.API_ID,
+        api_hash=Config.API_HASH,
+        bot_token=Config.BOT_TOKEN,
         plugins=dict(root="plugins")
         )
 
     async def start(self):  
 
-        if REPLIT:
+        if Config.REPLIT:
             await keep_alive()
             asyncio.create_task(ping_server())
 
@@ -71,17 +71,19 @@ class Bot(Client):
         temp.BOT_USERNAME = me.username
         temp.FIRST_NAME = me.first_name
 
-        if not await db.get_bot_stats():
-            await db.create_stats()
+
+        None if await db.get_bot_stats() else await db.create_stats()
+        None if await db.get_bot_vars() else await db.create_vars()
 
         # update col for existing users
-        filters = {'is_hashtag': {"$exists" : False},'hashtag': {"$exists" : False}}
-        update = {"$set": {'is_hashtag': True, 'hashtag': None}}
-        await update_existing_users(filters, update)
-        
-        if FILE_STORE:
+        await _update_existing_users()
+
+        # set vars
+        await make_vars()
+
+        if Config.FILE_STORE:
             try:
-                db_channel = await self.get_chat(FILE_STORE_DB)
+                db_channel = await self.get_chat(Config.FILE_STORE_DB)
                 temp.DB_CHANNEL = db_channel
                 test = await self.send_message(chat_id = db_channel.id, text = "Test Message")
                 await test.delete()

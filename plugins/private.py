@@ -1,10 +1,12 @@
 
-from pyrogram import Client, filters
-from utils import direct_gen_handler, extract_link, file_store_handler, main_convertor_handler, update_stats, user_api_check
-from config import ADMINS, DIRECT_GEN, FILE_STORE, IS_PRIVATE, base_sites
-from database.users import get_user, is_user_verified, update_user_info
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 import logging
+
+from config import Config
+from database.users import get_user, is_user_verified, update_user_info
+from pyrogram import Client, filters
+from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from utils import (extract_link, main_convertor_handler, update_stats,
+                   user_api_check)
 
 logger = logging.getLogger(__name__)
 
@@ -30,7 +32,7 @@ async def private_link_handler(c:Client, message:Message):
             elif len(message.text.strip()) == 40 and has_link <=0 and not message.reply_markup:
                 api = message.text
                 await update_user_info(message.from_user.id, {"shortener_api": api})
-                site_index = base_sites.index(user['base_site']) + 1
+                site_index = Config.base_sites.index(user['base_site']) + 1
                 await update_user_info(message.from_user.id, {f'shortener_api_{site_index}': api})
                 return await message.reply(f"Shortener API updated successfully to {api}")
 
@@ -43,7 +45,7 @@ async def private_link_handler(c:Client, message:Message):
             ],
 
         ])
-        if message.from_user.id not in ADMINS and IS_PRIVATE and not has_access:
+        if message.from_user.id not in Config.ADMINS and Config.IS_PRIVATE and not has_access:
             return await message.reply_text("This bot works only for authorized users. Request admin to use this bot", reply_markup=REPLY_MARKUP, disable_web_page_preview=True)
 
 

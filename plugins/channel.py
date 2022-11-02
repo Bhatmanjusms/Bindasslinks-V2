@@ -1,4 +1,4 @@
-from config import CHANNEL_ID, CHANNELS, ADMINS
+from config import Config
 from pyrogram import Client, filters
 from database.users import get_user
 from utils import broadcast_admins, main_convertor_handler, update_stats, user_api_check
@@ -11,7 +11,7 @@ logger.setLevel(logging.ERROR)
 
 # Channel
 
-@Client.on_message(~filters.forwarded & filters.chat(CHANNEL_ID) & (filters.channel | filters.group) & filters.incoming & ~filters.private & ~filters.forwarded)
+@Client.on_message(~filters.forwarded & filters.chat(Config.CHANNEL_ID) & (filters.channel | filters.group) & filters.incoming & ~filters.private & ~filters.forwarded)
 async def channel_link_handler(c:Client, message):
     
     user = await get_user(message.from_user.id)
@@ -19,9 +19,9 @@ async def channel_link_handler(c:Client, message):
 
     vld = await user_api_check(user)
 
-    if vld is not True and CHANNELS: return await broadcast_admins(c, "To use me in channel...\n\n" + vld )
+    if vld is not True and Config.CHANNELS: return await broadcast_admins(c, "To use me in channel...\n\n" + vld )
 
-    if CHANNELS:
+    if Config.CHANNELS:
         try:
             await main_convertor_handler(message, user_method, True)
             # Updating DB stats

@@ -8,7 +8,7 @@ import aiofiles
 import asyncio
 import traceback
 import aiofiles.os
-from config import ADMINS, BROADCAST_AS_COPY
+from config import Config
 from pyrogram.errors import FloodWait, InputUserDeactivated, UserIsBlocked, PeerIdInvalid
 from pyrogram.types import Message
 from pyrogram import Client, filters
@@ -16,7 +16,7 @@ from database import get_all_users, total_users_count, delete_user
 
 broadcast_ids = {}
 
-@Client.on_message(filters.command("broadcast") & filters.private & filters.chat(ADMINS))
+@Client.on_message(filters.command("broadcast") & filters.private & filters.chat(Config.ADMINS))
 async def broadcast_handler(c:Client, m:Message):
     if m.reply_to_message:
         try:
@@ -28,9 +28,9 @@ async def broadcast_handler(c:Client, m:Message):
 
 async def send_msg(user_id, message):
     try:
-        if not BROADCAST_AS_COPY:
+        if not Config.BROADCAST_AS_COPY:
             await message.forward(chat_id=user_id)
-        elif BROADCAST_AS_COPY:
+        else:
             await message.copy(chat_id=user_id)
         return 200, None
     except FloodWait as e:
@@ -50,12 +50,11 @@ async def main_broadcast_handler(m:Message):
     all_users = await get_all_users()
     broadcast_msg = m.reply_to_message
     while True:
-        broadcast_id = ''.join([random.choice(string.ascii_letters) for i in range(3)])
+        broadcast_id = ''.join([random.choice(string.ascii_letters) for _ in range(3)])
         if not broadcast_ids.get(broadcast_id):
             break
-    out = await m.reply_text(
-        text=f"Broadcast Started! You will be notified with log file when all the users are notified."
-    )
+    out = await m.reply_text(text="Broadcast Started! You will be notified with log file when all the users are notified.")
+
     start_time = time.time()
     total_users = await total_users_count()
     done = 0

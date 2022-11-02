@@ -1,0 +1,46 @@
+txt = """addadmin
+log
+stats
+ban
+restart
+is_private
+link_bypass
+base_site
+verified_time
+log_channel
+update_channel
+keyboard_button
+is_mdisk
+is_default_base_site
+is_bindasslinks
+is_droplink
+is_tnlinks
+is_indianshortener
+is_easysky
+is_earnl_site
+is_earnl_xyz
+is_urlearn_xyz
+is_linkshortify
+file_store_db
+direct_gen_db
+file_store_bot_username
+direct_gen_bot_username
+direct_gen_url
+start_message
+help_message
+about_text
+method_message
+user_about_message
+mdisk_api_message
+shortener_api_message
+username_message
+hashtag_message
+pvt_links_message
+banner_image_message
+bitly_api_message
+features_message
+balance_message
+account_message"""
+
+for i in txt.splitlines():
+    print(f"/{i}")

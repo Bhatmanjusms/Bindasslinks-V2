@@ -1,9 +1,9 @@
 from datetime import datetime
 from motor.motor_asyncio import AsyncIOMotorClient
-from config import BASE_SITE, DATABASE_URL, DATABASE_NAME, VERIFIED_TIME
+from config import Config
 
-client = AsyncIOMotorClient(DATABASE_URL)
-db= client[DATABASE_NAME]
+client = AsyncIOMotorClient(Config.DATABASE_URL)
+db= client[Config.DATABASE_NAME]
 col = db["users"]
 misc = db["misc"]
 
@@ -22,7 +22,7 @@ async def get_user(user_id):
             "header_text": "",
             "footer_text": "",
             "username": None,
-            "base_site": BASE_SITE,
+            "base_site": Config.BASE_SITE,
             "banner_image": None,
             "hashtag": None,
             "bitly_api":None,
@@ -75,7 +75,7 @@ async def is_user_verified(user_id):
     except Exception:
         user = await get_user(user_id)
         pastDate = user["last_verified"]
-    return (datetime.now() - pastDate).days <= VERIFIED_TIME
+    return (datetime.now() - pastDate).days <= Config.VERIFIED_TIME
 
 async def total_users_count():
     return await col.count_documents({})

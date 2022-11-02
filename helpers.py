@@ -1,8 +1,7 @@
 # temp db for banned 
 
 import database
-from config import ADMINS, CHANNEL_ID, CHANNELS, EXCLUDE_DOMAIN, FOOTER_TEXT, HEADER_TEXT, MDISK_API, DROPLINK_API, INCLUDE_DOMAIN, USERNAME, REPLIT_APP_NAME, REPLIT_USERNAME, REPLIT, PING_INTERVAL
-
+from config import Config
 import asyncio
 import logging
 import aiohttp
@@ -38,11 +37,11 @@ class Helpers:
 
     @property
     async def user_mdisk_api(self):
-        return MDISK_API
+        return Config.MDISK_API
 
     @property
     async def user_droplink_api(self):
-        return DROPLINK_API
+        return Config.DROPLINK_API
     
     @property
     async def user_method(self):
@@ -51,27 +50,27 @@ class Helpers:
 
     @property
     async def get_included_domain(self):
-        if INCLUDE_DOMAIN:   
+        if Config.INCLUDE_DOMAIN:   
             x=''
-            async for i in AsyncIter(INCLUDE_DOMAIN):
+            async for i in AsyncIter(Config.INCLUDE_DOMAIN):
                 x+= f"- `{i}`"
             return x
         return "No Included Domain"
 
     @property
     async def get_excluded_domain(self):
-        if EXCLUDE_DOMAIN:   
+        if Config.EXCLUDE_DOMAIN:   
             x=''
-            async for i in AsyncIter(EXCLUDE_DOMAIN):
+            async for i in AsyncIter(Config.EXCLUDE_DOMAIN):
                 x+= f"- `{i}`\n"
             return x
         return "No Excluded Domain"
 
     @property
     async def get_channels(self):
-        if CHANNELS:   
+        if Config.CHANNELS:   
             x=''
-            async for i in AsyncIter(CHANNEL_ID):
+            async for i in AsyncIter(Config.CHANNEL_ID):
                 x+= f"~ `{i}`\n"
             return x
         return "Channels is set to False in heroku Var"
@@ -79,33 +78,33 @@ class Helpers:
     @property
     async def get_admins(self):
         x=''
-        async for i in AsyncIter(ADMINS):
+        async for i in AsyncIter(Config.ADMINS):
             x+= f"~ `{i}`\n"
         return x
         
     @property
     async def header_text(self):
-        return HEADER_TEXT or "No Header Text"
+        return Config.HEADER_TEXT or "No Header Text"
         
     @property
     async def footer_text(self):
-        return FOOTER_TEXT or "No Footer Text"
+        return Config.FOOTER_TEXT or "No Footer Text"
 
     @property
     async def get_username(self):
-        return USERNAME
+        return Config.USERNAME
 
 
 
 async def ping_server():
-    sleep_time = PING_INTERVAL
+    sleep_time = Config.PING_INTERVAL
     while True:
         await asyncio.sleep(sleep_time)
         try:
             async with aiohttp.ClientSession(
                             timeout=aiohttp.ClientTimeout(total=10)
                         ) as session:
-                async with session.get(REPLIT) as resp:
+                async with session.get(Config.REPLIT) as resp:
                     logging.info(f"Pinged server with response: {resp.status}")
         except TimeoutError:
             logging.warning("Couldn't connect to the site URL..!")

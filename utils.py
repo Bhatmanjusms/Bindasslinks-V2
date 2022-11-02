@@ -1,5 +1,6 @@
 import asyncio
 import base64
+import os
 import random
 import re
 import json
@@ -16,7 +17,7 @@ from mdisky import Mdisk
 from bs4 import BeautifulSoup
 from urllib.parse import urlparse
 from pyrogram.errors import FloodWait
-from config import *
+from config import Config
 from pyrogram.types import Message
 from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 import pyshorteners
@@ -24,7 +25,7 @@ from pyrogram.types import InputMediaPhoto
 from pyrogram.errors.exceptions.bad_request_400 import PeerIdInvalid
 import logging
 from urllib.parse import quote_plus
-from database.users import update_user_info
+from database.users import update_existing_users, update_user_info
 
 from helpers import temp
 logger = logging.getLogger(__name__)
@@ -32,11 +33,11 @@ logger.setLevel(logging.ERROR)
 
 
 async def main_convertor_handler(message:Message, type:str, edit_caption:bool=False, user=None):
-    username = USERNAME
-    hashtag = HASHTAG
-    header_text = HEADER_TEXT
-    footer_text = FOOTER_TEXT
-    banner_image = BANNER_IMAGE
+    username = Config.USERNAME
+    hashtag = Config.HASHTAG
+    header_text = Config.HEADER_TEXT
+    footer_text = Config.FOOTER_TEXT
+    banner_image = Config.BANNER_IMAGE
 
     if user:
         header_text = user["header_text"] if user["is_header_text"] else ""
@@ -127,7 +128,7 @@ async def main_convertor_handler(message:Message, type:str, edit_caption:bool=Fa
     elif message.media:
 
         if edit_caption:
-            if BANNER_IMAGE and message.photo:
+            if Config.BANNER_IMAGE and message.photo:
                 return await message.edit_media(media=fileid)
 
             return await message.edit_caption(shortenedText, reply_markup=reply_markup)
@@ -160,7 +161,7 @@ async def reply_markup_handler(message:Message, method_func):
 
 
 async def mdisk_api_handler(user, text):
-    api_key = user["mdisk_api"] if user else MDISK_API
+    api_key = user["mdisk_api"] if user else Config.MDISK_API
     mdisk = Mdisk(api_key)
     return await mdisk.convert_from_text(text)
 
@@ -259,26 +260,26 @@ async def bitly_short_handler(text, user):
 
 # todo -> bypass long droplink url
 async def droplink_bypass_handler(text):
-    if LINK_BYPASS:
+    if Config.LINK_BYPASS:
         links = await extract_link(text)
         for link in links:
-            if "bindaaslinks.com" in link and IS_BINDASSLINKS:
+            if "bindaaslinks.com" in link and Config.IS_BINDASSLINKS:
                 bypassed_link = await bindasslink_bypass(link)
-            elif "droplink.co" in link and IS_DROPLINK:
+            elif "droplink.co" in link and Config.IS_DROPLINK:
                 bypassed_link = await droplink_bypass(link)
-            elif "tnlink.in" in link and IS_TNLINKS:
+            elif "tnlink.in" in link and Config.IS_TNLINKS:
                 bypassed_link = await tnlink_bypass(link)
-            elif "easysky.in" in link and IS_EASYSKY:
+            elif "easysky.in" in link and Config.IS_EASYSKY:
                 bypassed_link = await easysky_bypass(link)
-            elif "indianshortner" in link and IS_INDIANSHORTENER:
+            elif "indianshortner" in link and Config.IS_INDIANSHORTENER:
                 bypassed_link = await indianshortner_bypass(link)
-            elif 'lksfy' in link and IS_LINKSHORTIFY:
+            elif 'lksfy' in link and Config.IS_LINKSHORTIFY:
                 bypassed_link = await linkshortify_bypass(link)
-            elif 'earnl.site' in link and IS_EARNL_SITE:
+            elif 'earnl.site' in link and Config.IS_EARNL_SITE:
                 bypassed_link = await earnl_site_bypass(link)
-            elif 'earnl.xyz' in link and IS_EARNL_SITE:
+            elif 'earnl.xyz' in link and Config.IS_EARNL_SITE:
                 bypassed_link = await earnl_xyz_bypass(link)
-            elif 'vearnl.in' in link and IS_URLEARN_XYZ:
+            elif 'vearnl.in' in link and Config.IS_URLEARN_XYZ:
                 bypassed_link = await urlearn_xyz_bypass(link)
             with contextlib.suppress(Exception):
                 text = text.replace(link, bypassed_link)
@@ -478,7 +479,7 @@ async def is_droplink_url(url):
 
 async def broadcast_admins(c: Client, Message, sender=False):
 
-    admins = ADMINS[:]
+    admins = Config.ADMINS[:]
     
     if sender:
         admins.remove(sender)
@@ -661,7 +662,7 @@ async def file_store_handler(message, user):
         converted_id = post_message.id * abs(temp.DB_CHANNEL.id)
         string = f"get-{converted_id}"
         base64_string = await encode(string)
-        link = f"https://telegram.me/{FILE_STORE_BOT_USERNAME}?start={base64_string}"
+        link = f"https://telegram.me/{Config.FILE_STORE_BOT_USERNAME}?start={base64_string}"
         link = await replace_link(user, link)
         reply_markup = InlineKeyboardMarkup([[InlineKeyboardButton("🔁 Share URL", url=f'https://telegram.me/share/url?url={link}')]])
         await message.reply_text(f"<b>Here is your link</b>\n\n{link}", reply_markup=reply_markup, disable_web_page_preview = True)
@@ -673,7 +674,7 @@ async def file_store_handler(message, user):
 async def direct_gen_handler(c: Client, m: Message, user, mode:str):
     # FIle store Bot 
     try:
-        log_msg = await m.forward(chat_id=DIRECT_GEN_DB)
+        log_msg = await m.forward(chat_id=Config.DIRECT_GEN_DB)
         reply_markup, Stream_Text, stream_link = await gen_link(m=m, log_msg=log_msg, user=user, mode=mode)
         await log_msg.reply_text(text=f"**Requested By :** [{m.chat.first_name}](tg://user?id={m.chat.id})\n**Group ID :** `{m.from_user.id}`\n**Download Link :** {stream_link}", disable_web_page_preview=True, quote=True)
         
@@ -686,7 +687,7 @@ async def direct_gen_handler(c: Client, m: Message, user, mode:str):
     except FloodWait as e:
         print(f"Sleeping for {str(e.x)}s")
         await asyncio.sleep(e.x)
-        await c.send_message(chat_id=DIRECT_GEN_DB, text=f"Got Floodwait Of {str(e.x)}s from [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\n**User ID :** `{str(m.from_user.id)}`", disable_web_page_preview=True, )
+        await c.send_message(chat_id=Config.DIRECT_GEN_DB, text=f"Got Floodwait Of {str(e.x)}s from [{m.from_user.first_name}](tg://user?id={m.from_user.id})\n\n**User ID :** `{str(m.from_user.id)}`", disable_web_page_preview=True, )
 
 
 def get_media_from_message(message: "Message"):
@@ -746,8 +747,8 @@ async def gen_link(m: Message,log_msg: Messages, user, mode):
     file_name = get_name(log_msg)
     file_size = humanbytes(get_media_file_size(log_msg))
 
-    page_link = org_page_link =  f"{DIRECT_GEN_URL}watch/{get_hash(log_msg)}{log_msg.id}"
-    stream_link = stream_org_link = f"{DIRECT_GEN_URL}{log_msg.id}/{quote_plus(get_name(m))}?hash={get_hash(log_msg)}"
+    page_link = org_page_link =  f"{Config.DIRECT_GEN_URL}watch/{get_hash(log_msg)}{log_msg.id}"
+    stream_link = stream_org_link = f"{Config.DIRECT_GEN_URL}{log_msg.id}/{quote_plus(get_name(m))}?hash={get_hash(log_msg)}"
 
     # short
     page_link = await replace_link(user, page_link)
@@ -756,12 +757,69 @@ async def gen_link(m: Message,log_msg: Messages, user, mode):
     if mode == "direct":
         txt = f"<b>Original Link :</b> {stream_org_link}\n<b>📥 Download :</b> {stream_link}\n"
 
-        Stream_Text=stream_msg_text.format(file_name, file_size) + txt
+        Stream_Text=Config.stream_msg_text.format(file_name, file_size) + txt
     elif mode == "stream":
-        txt = "<b>Original Stream Link :</b> {}\n<b>🖥 Watch :</b> {}".format(org_page_link, page_link)
-        Stream_Text=stream_msg_text.format(file_name, file_size) + txt
+        txt = f"<b>Original Stream Link :</b> {org_page_link}\n<b>🖥 Watch :</b> {page_link}"
+
+        Stream_Text=Config.stream_msg_text.format(file_name, file_size) + txt
 
     reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🖥STREAM", url=page_link), InlineKeyboardButton("Dᴏᴡɴʟᴏᴀᴅ 📥", url=stream_link)],])
 
     return reply_markup, Stream_Text, stream_link
 
+async def _update_existing_users():
+    filters = {'is_hashtag': {"$exists" : False},'hashtag': {"$exists" : False}}
+    update = {"$set": {'is_hashtag': True, 'hashtag': None}}
+    await update_existing_users(filters, update)
+
+async def get_response(url):
+    client = requests.Session()
+    res = client.get(url)
+    return res.json()
+
+def is_enabled(value):
+    if value.lower() in ["true", "yes", "1", "enable", "y"]:
+        return True
+    elif value.lower() in ["false", "no", "0", "disable", "n"]:
+        return False
+
+async def make_vars():
+    bot_vars = await db.get_bot_vars()
+    Config.ADMINS = bot_vars['admins']
+    Config.BROADCAST_AS_COPY = bot_vars['broadcast_as_copy']
+    Config.IS_PRIVATE = bot_vars['broadcast_as_copy']
+    Config.CHANNELS = bot_vars['channels']
+    Config.CHANNEL_ID = bot_vars['channel_id']
+    Config.USERNAME =bot_vars['username']
+    Config.HASHTAG = bot_vars['hashtag']
+    Config.HEADER_TEXT = bot_vars['header_text']
+    Config.FOOTER_TEXT = bot_vars['footer_text']
+    Config.BANNER_IMAGE =bot_vars['banner_image']
+    Config.WELCOME_IMAGE =bot_vars['welcome_image']
+    Config.LINK_BYPASS = bot_vars['link_bypass']
+    Config.BASE_SITE = bot_vars['base_site']
+    Config.VERIFIED_TIME = bot_vars['verified_time']
+    Config.LOG_CHANNEL = bot_vars['log_channel']
+    Config.UPDATE_CHANNEL = bot_vars['update_channel']
+    Config.KEYBOARD_BUTTON = bot_vars['keyboard_button']
+
+    Config.IS_MDISK = bot_vars['is_mdisk']
+    Config.IS_DEFAULT_BASE_SITE = bot_vars['is_default_base_site']
+    Config.FILE_STORE_DB = bot_vars['file_store_db']
+    Config.FILE_STORE_BOT_USERNAME = bot_vars['file_store_bot_username']
+    Config.FILE_STORE = bool(Config.FILE_STORE_DB and Config.FILE_STORE_BOT_USERNAME)
+
+    Config.DIRECT_GEN_DB = bot_vars['direct_gen_db']
+    Config.DIRECT_GEN_BOT_USERNAME = bot_vars['direct_gen_bot_username']
+    Config.DIRECT_GEN_URL = bot_vars['direct_gen_url']
+    Config.DIRECT_GEN = bool(Config.DIRECT_GEN_DB and Config.DIRECT_GEN_BOT_USERNAME and Config.DIRECT_GEN_URL)
+
+    Config.IS_BINDASSLINKS =  bot_vars['is_bindasslinks']
+    Config.IS_DROPLINK =  bot_vars['is_droplink']
+    Config.IS_TNLINKS=  bot_vars['is_tnlinks']
+    Config.IS_INDIANSHORTENER =  bot_vars['is_indianshortener']
+    Config.IS_EASYSKY =  bot_vars['is_easysky']
+    Config.IS_LINKSHORTIFY =  bot_vars['is_linkshortify']
+    Config.IS_EARNL_SITE =  bot_vars['is_earnl_site']
+    Config.IS_EARNL_XYZ =  bot_vars['is_earnl_xyz']
+    Config.IS_URLEARN_XYZ =  bot_vars['is_urlearn_xyz']

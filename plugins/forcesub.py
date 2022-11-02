@@ -1,18 +1,17 @@
 import contextlib
-import os
 from pyrogram import Client, filters
 from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
 from pyrogram.errors import UserNotParticipant
 from database.database import *
-from config import *
+from config import Config
 
 @Client.on_message(filters.private & filters.incoming)
 async def forcesub(c:Client, m:Message):
-    if UPDATE_CHANNEL:
-        owner = await c.get_users(int(OWNER_ID))
-        invite_link = await c.create_chat_invite_link(UPDATE_CHANNEL)
+    if Config.UPDATE_CHANNEL:
+        owner = await c.get_users(int(Config.OWNER_ID))
+        invite_link = await c.create_chat_invite_link(Config.UPDATE_CHANNEL)
         try:
-            user = await c.get_chat_member(UPDATE_CHANNEL, m.from_user.id)
+            user = await c.get_chat_member(Config.UPDATE_CHANNEL, m.from_user.id)
             if user.status == "kicked":
                await m.reply_text("**Hey you are banned 😜**", quote=True)
                return
@@ -35,10 +34,10 @@ async def forcesub(c:Client, m:Message):
 
 @Client.on_callback_query(filters.regex('^refresh'))
 async def refresh_cb(c, m):
-    owner = await c.get_users(int(OWNER_ID))
-    if UPDATE_CHANNEL:
+    owner = await c.get_users(int(Config.OWNER_ID))
+    if Config.UPDATE_CHANNEL:
         try:
-            user = await c.get_chat_member(UPDATE_CHANNEL, m.from_user.id)
+            user = await c.get_chat_member(Config.UPDATE_CHANNEL, m.from_user.id)
             if user.status == "kicked":
                 with contextlib.suppress(Exception):
                     await m.message.edit("**Hey you are banned**")

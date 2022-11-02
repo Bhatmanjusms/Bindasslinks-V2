@@ -1,9 +1,8 @@
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-import os
-from config import BANNER_IMAGE, IS_MDISK, USERNAME, base_sites
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
+from config import Config
 
 
-BATCH_MESSAGE = BATCH = """
+Config.BATCH_MESSAGE = BATCH = """
 This command is used to short or convert links from first to last posts
 
 Make the bot as an admin in your channel
@@ -13,7 +12,7 @@ Command usage: `/batch [channel id or username]`
 Ex: `/batch -100xxx`
 """
 
-START_MESSAGE = '''🄷🄴🄻🄻🄾, {}
+Config.START_MESSAGE = '''🄷🄴🄻🄻🄾, {}
 **I'm bindaaslinks.com  Official Bot I Can Convert  Bulk Links To Yours Short Links From Direct Your Bindaaslinks.com Account With Just a Simple Clicks😍\n\n** 
 **How To Use 🤔\n ✅1. Got To [https://bit.ly/3cbbgs0](https://bindaaslinks.com/ref/bhatmanjusms) & Complete Your Registration.\n ✅2.Get Your API https://bindaaslinks.com/member/tools/api Copy Your API \n ✅3. Add your api using command /api \n Example : `/Api 0beb1135aac920c1e89856847ef4e8e03e8547a9` \n\n**
 ** For More Help Press /Help**
@@ -21,9 +20,9 @@ START_MESSAGE = '''🄷🄴🄻🄻🄾, {}
 **ᴄᴜʀʀᴇɴᴛ ᴍᴇᴛʜᴏᴅ sᴇʟᴇᴄᴛᴇᴅ: {}**
 **made with: {}**
 '''
-START_MESSAGE =  os.environ.get('START_MESSAGE', START_MESSAGE)
 
-HELP_MESSAGE = '''**
+
+Config.HELP_MESSAGE = '''**
 Hey! My name is {firstname}. I am a Link Convertor and Shortener Bot, here to make your Work Easy and Help you to Earn more
 
 👇 USEFULL COMMANDS 👇
@@ -51,9 +50,9 @@ Hey! My name is {firstname}. I am a Link Convertor and Shortener Bot, here to ma
 ⚙ Hit 👉 /settings To Set settings As per your wish
 
 IF You need More HeLp Then Contact @BindaasLinksIndia ♥️**'''
-HELP_MESSAGE =  os.environ.get('HELP_MESSAGE', HELP_MESSAGE)
 
-ABOUT_TEXT = """**👉Know More: 
+
+Config.ABOUT_TEXT = """**👉Know More: 
 
 ➲🤖 ʙᴏᴛ ɴᴀᴍᴇ  :  {} 
 
@@ -69,11 +68,11 @@ ABOUT_TEXT = """**👉Know More:
 
 sᴏ ɴᴏᴡ sᴇɴᴅ ᴍᴇ ᴛʜᴇ ʟɪɴᴋs, ɪ ᴡɪʟʟ ᴄᴏɴᴠᴇʀᴛ ɪᴛ ᴀɴᴅ ɢɪᴠᴇ ɪᴛ ᴛᴏ ʏᴏᴜ 😊  ɪғ ʏᴏᴜ ɴᴇᴇᴅ sᴀᴍᴇ ʙᴏᴛ ᴛᴏ ʏᴏᴜ'ʀᴇ sʜᴏʀᴛɴᴇʀ ᴛʜᴇɴ ᴄᴏɴᴛᴀᴄᴛ @CR_0O0
 **"""
-ABOUT_TEXT =  os.environ.get('ABOUT_MESSAGE', ABOUT_TEXT)
+
 
 is_mdisk = "\n> `mdisk` - Save all the links of the post to your Mdisk account.\n"
 
-METHOD_MESSAGE = """
+Config.METHOD_MESSAGE = """
 Current Method: {method}
     
 Methods Available:
@@ -83,24 +82,24 @@ Methods Available:
 > `shortener` - Short all the links of the post to link directly.
 %s
 To change method, choose it from the following options:
-""" % is_mdisk if IS_MDISK else ''
-METHOD_MESSAGE =  os.environ.get('METHOD_MESSAGE', METHOD_MESSAGE)
+""" % is_mdisk if Config.IS_MDISK else ''
 
-CUSTOM_ALIAS_MESSAGE = """For custom alias, `[link] | [custom_alias]`, Send in this format
+
+Config.CUSTOM_ALIAS_MESSAGE = """For custom alias, `[link] | [custom_alias]`, Send in this format
 
 This feature works only in private mode only
 
 Ex: https://t.me/example | Example"""
 
 
-ADMINS_MESSAGE = """
+Config.ADMINS_MESSAGE = """
 List of Admins who has access to this Bot
 
 {admin_list}
 """
 
 
-CHANNELS_LIST_MESSAGE = """
+Config.CHANNELS_LIST_MESSAGE = """
 List of channels that have access to this Bot:
 
 {channels}"""
@@ -113,20 +112,23 @@ HELP_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Methods', callb
 ABOUT_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Home', callback_data='start_command'), InlineKeyboardButton('Help', callback_data='help_command')], [InlineKeyboardButton('Close', callback_data='delete')]])
 
 
-START_MESSAGE_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data='help_command'), InlineKeyboardButton('About', callback_data='about_command')], [InlineKeyboardButton('Method', callback_data='method_command'), InlineKeyboardButton('Join Channel♥️', url=f'https://telegram.me/{USERNAME}')], [InlineKeyboardButton('Close', callback_data='delete')]])
+START_MESSAGE_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data='help_command'), InlineKeyboardButton('About', callback_data='about_command')], [InlineKeyboardButton('Method', callback_data='method_command'), InlineKeyboardButton('Join Channel♥️', url=f'https://telegram.me/{Config.USERNAME}')], [InlineKeyboardButton('Close', callback_data='delete')]])
 
+START_MESSAGE_KEYBOARD = ReplyKeyboardMarkup([  
+    [KeyboardButton(text="Method"), KeyboardButton(text="Mdisk API")],
+    [KeyboardButton(text="API"), KeyboardButton(text="Bitly API")],
+    [KeyboardButton(text="Header"), KeyboardButton(text="Footer")],
+    [KeyboardButton(text="Username"), KeyboardButton(text="Hashtag")],
+    [KeyboardButton(text="Channel Link"), KeyboardButton(text="Banner Image")],
+    [KeyboardButton(text="Features"), KeyboardButton(text="Site")],
+    [KeyboardButton(text="Balance"), KeyboardButton(text="Account")],
+    [KeyboardButton(text="Settings"),],
+    ])
 
-
-
-if IS_MDISK:
+if Config.IS_MDISK:
     method_btn = [[InlineKeyboardButton('Mdisk+shortner', callback_data='change_method#mdlink'), InlineKeyboardButton('Shortener', callback_data='change_method#shortener'), InlineKeyboardButton('Mdisk', callback_data='change_method#mdisk')], [InlineKeyboardButton('Back', callback_data='help_command'), InlineKeyboardButton('Close', callback_data='delete')]]
-
-
-
 else:
     method_btn = [[InlineKeyboardButton('Mdisk+Shortner', callback_data='change_method#mdlink'), InlineKeyboardButton('Shortener', callback_data='change_method#shortener')], [InlineKeyboardButton('Back', callback_data='help_command'), InlineKeyboardButton('Close', callback_data='delete')]]
-
-
 
 
 METHOD_REPLY_MARKUP = InlineKeyboardMarkup(method_btn)
@@ -138,11 +140,11 @@ BASE_SITE_REPLY_MARKUP = InlineKeyboardMarkup([
     [
         InlineKeyboardButton(site, callback_data=f'change_site#{site}')
     ]
-    for site in base_sites
+    for site in Config.base_sites
 ])
 
 
-USER_ABOUT_MESSAGE = """**
+Config.USER_ABOUT_MESSAGE = """**
 - sʜᴏʀᴛᴇɴᴇʀ ᴡᴇʙsɪᴛᴇ: {base_site}
 
 - ᴍᴇᴛʜᴏᴅ: {method}
@@ -167,19 +169,18 @@ USER_ABOUT_MESSAGE = """**
 
 - Hashtag: {hashtag}
 **"""
-USER_ABOUT_MESSAGE =  os.environ.get('USER_ABOUT_MESSAGE', USER_ABOUT_MESSAGE)
 
 
-MDISK_API_MESSAGE = """**To add or update your Mdisk API, \n`/mdisk_api mdisk_api`
+Config.MDISK_API_MESSAGE = """**To add or update your Mdisk API, \n`/mdisk_api mdisk_api`
             
 Ex: `/mdisk_api 6LZq851sXoPHugiKQq`
             
 Others Mdisk Links will be automatically changed to the API of this Mdisk account
 
 Current Mdisk API: `{}`**"""
-MDISK_API_MESSAGE =  os.environ.get('MDISK_API_MESSAGE', MDISK_API_MESSAGE)
 
-SHORTENER_API_MESSAGE = """**To add or update your Shortner Website API, 
+
+Config.SHORTENER_API_MESSAGE = """**To add or update your Shortner Website API, 
 `/shortener_api [api]`
             
 Ex: `/api 6LZq851sXofffPHugiKQq`
@@ -187,18 +188,18 @@ Ex: `/api 6LZq851sXofffPHugiKQq`
 Current Website: {base_site}
 
 Current Shortener API: `{shortener_api}`**"""
-SHORTENER_API_MESSAGE =  os.environ.get('SHORTENER_API_MESSAGE', SHORTENER_API_MESSAGE)
 
-HEADER_MESSAGE = """**Reply to the Header Text You Want
+
+Config.HEADER_MESSAGE = """**Reply to the Header Text You Want
 
 This Text will be added to the top of every message caption or text
 
 Example :- `/Header Join @filmyfunda_movies` 
 
 To Remove Header Text: `/header remove`**"""
-HEADER_MESSAGE =  os.environ.get('HEADER_MESSAGE', HEADER_MESSAGE)
 
-FOOTER_MESSAGE = """**Reply to the Footer Text You Want
+
+Config.FOOTER_MESSAGE = """**Reply to the Footer Text You Want
 
 This Text will be added to the bottom of every message caption or text
 
@@ -206,9 +207,9 @@ This Text will be added to the bottom of every message caption or text
 Example :- `/Footer Join @filmyfunda_movies` 
 
 To Remove Footer Text: `/footer remove`**"""
-FOOTER_MESSAGE =  os.environ.get('FOOTER_MESSAGE', FOOTER_MESSAGE)
 
-USERNAME_TEXT = """"**Current Username: {username}
+
+Config.USERNAME_TEXT = """"**Current Username: {username}
 
 Usage: `/username your_username`
 
@@ -218,9 +219,9 @@ This username will be automatically replaced with other usernames in the post
 Example :- `/username @CR_0O0` 
 
 To remove this username, `/username remove`**"""
-USERNAME_TEXT =  os.environ.get('USERNAME_MESSAGE', USERNAME_TEXT)
 
-HASHTAG_TEXT = """**Current Hashtag: {hashtag}
+
+Config.HASHTAG_TEXT = """**Current Hashtag: {hashtag}
 
 Usage: `/hashtag your_hashtag`
 
@@ -229,10 +230,10 @@ This hashtag will be automatically replaced with other hashtags in the post
 Example :- `/hashtag instagramdown` 
 
 To remove this hashtag, `/hashtag remove`**"""
-HASHTAG_TEXT =  os.environ.get('HASHTAG_MESSAGE', HASHTAG_TEXT)
 
 
-PVT_LINKS_TEXT = """"**Current Channel Links: {pvt_link}
+
+Config.PVT_LINKS_TEXT = """**Current Channel Links: {pvt_link}
 
 Usage: `/channel_link https://t.me/+riua0Y3YXHo4NjY1`
 
@@ -241,9 +242,9 @@ This Channel Link will be automatically replaced with other private links in the
 Example :- `/channel_link https://t.me/+riua0Y3YXHo4NjY1` 
 
 To remove this Channel Link, `/channel_link remove`**"""
-PVT_LINKS_TEXT =  os.environ.get('PVT_LINKS_TEXT', PVT_LINKS_TEXT)
 
-BANNER_IMAGE = """**Current Banner Image URL: {banner_image}
+
+Config.BANNER_IMAGE_TEXT = """**Current Banner Image URL: {banner_image}
 
 Usage: `firat send your image after reply that image with /banner_image command`
 
@@ -252,9 +253,9 @@ This image will be automatically replaced with other images in the post
 To remove custom image, `/banner_image remove`
 
 Eg: `/banner_image https://www.nicepng.com/png/detail/436-4369539_movie-logo-film.png`**"""
-BANNER_IMAGE = os.environ.get('BANNER_IMAGE_MESSAGE', BANNER_IMAGE)
 
-INCLUDE_DOMAIN_TEXT = """**
+
+Config.INCLUDE_DOMAIN_TEXT = """**
 Use this option if you want to short only links from the following domains list.
 
 Current Include Domain:
@@ -269,9 +270,9 @@ Ex: /include_domain remove t.me
 To remove all domains, `/include_domain remove_all
 Ex: /include_domain remove_all
 **"""
-INCLUDE_DOMAIN_TEXT = os.environ.get('INCLUDE_DOMAIN_MESSAGE', INCLUDE_DOMAIN_TEXT)
 
-EXCLUDE_DOMAIN_TEXT = """**
+
+Config.EXCLUDE_DOMAIN_TEXT = """**
 Use this option if you wish to short every link on your channel but exclude only the links from the following domains list
 
 Current Exclude Domains:
@@ -286,12 +287,46 @@ Ex: /exclude_domain remove t.me
 To remove all domains, `/exclude_domain remove_all
 Ex: /exclude_domain remove_all
 **"""
-INCLUDE_DOMAIN_TEXT = os.environ.get('EXCLUDE_DOMAIN_MESSAGE', EXCLUDE_DOMAIN_TEXT)
 
-BITLY_API_MESSAGE = """**To add or update your Bitly API , 
+
+Config.BITLY_API_MESSAGE = """**To add or update your Bitly API , 
 `/bitly_api [api]`
             
 Ex: `/bitly_api 6LZq851sXofffPHugiKQq`
 
 Current API: `{bitly_api}`**"""
-BITLY_API_MESSAGE = os.environ.get('BITLY_API_MESSAGE', BITLY_API_MESSAGE)
+
+Config.FEATURES_MESSAGE = "**Hello, {first_name}!**\n\n**💠 Features Of Link Shortner Bot 💠\n\n❤️ It's A User Friendly Bot ❤️\n\n➡️ Use Can Short Bulk Links Into Your Shortner Account With This Bot\n\n➡️ You Can Also Short Links With Custom Alias\n\n➡️ You Can Also Use Mdisk Links To Short It Into Your Mdisk Account And Then Shortner Account\n\n➡️ You Can Set Custom Header\n\n➡️ You Can Set Custom Footer\n\n➡️ You Can Set Custom Banner Image\n\n➡️ You Can Chage Telegram Username\n\n➡️ You Can replace others channel links to your channel link\n\n➡️ You Can Use Bitly To Short shortner Link\n\n➡️ You Can Chose Different Link Short Methods\n\n➡️ You Can Use Settings Section To Manage All Things At One Place\n\n➡️ You Can Send File To Bot And Bot Will Give You Different shortner Links & It Will Be Usable To Download File Directly, Streaming It Online & Download File From File To Link Bot\n\n➡️ You Can Change Other Shortner Links To Your Shortner Account Links\n\n➡️ Bot can also short hidden links and hyperlinks\n\n➡️ Bot can short button links also\n\n⚠️ if you need same bot to your shortner site then contact me @CR_0O0 ⚡️**"  
+
+
+Config.BALANCE_CMD_TEXT = """
+🔰 Account Username : {username} 
+
+➡️ Publisher Earnings : {publisher_earnings}
+➡️ Referral Earning : {referral_earnings}
+
+✅ Available Balance : {available_balance}
+
+👇🏻Click Hear To Withdraw Your Earnings 👇🏻"""
+
+
+Config.ACCOUNT_CMD_TEXT = """
+🔰 Username : {username} 
+📧 Email Address : {email} 
+
+💠 Withdrawal Method : {withdrawal_method} 
+➡️ Withdrawal Account : {withdrawal_account}
+
+🔗 Referral Link : {referral_link}
+
+👇 Click Here To Share Your Referral Link 👇"""
+
+Config.ADD_ADMIN_TEXT = """Current Admins:
+{}
+Usage: /addadmin id
+Ex: `/addadmin 14035272, 14035272`
+To remove a admin,
+Ex: `/addadmin remove 14035272`
+To remove all admins,
+Ex: `/addadmin remove_all`
+"""
