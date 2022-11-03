@@ -22,30 +22,9 @@
       "description": "Get this value from https://my.telegram.org",
       "value": ""
     },
-
-    "CHANNELS": {
-      "description": "Enter True if you want the bot to work in Channels also else Leave it as it is",
-      "value": "",
-      "required": false
-    },
-    "CHANNEL_ID": {
-      "description": "Enter your Channel ID, Leave this to deafault if CHANNELS set to False. Separate each ID by Space.",
-      "value": "",
-      "required": false
-    },
-    "FORWARD_MESSAGE": {
-      "description": "Enter True if you want to edit forwarded message also in your channel. Entering True will delete the forwarded post in your channel and repost it with shorten link. Leave this to deafault if CHANNELS set to False",
-      "value": "",
-      "required": false
-    },
     "ADMINS": {
       "description": "Your Telegram ID and ID of Users you want add as Admin. Separate each ID by comma.",
       "value": ""
-    },
-    "USERNAME": {
-      "description": "Your Telegram Channel Username without @",
-      "value": "",
-      "required": false
     },
     "DATABASE_NAME": {
       "description": "Name of the database",
@@ -57,27 +36,7 @@
       "value": "",
       "required": true
     },
-    "LINK_BYPASS":{
-      "description": "Enter True if you want other shortener links to be bypassed. Read README for more information",
-      "value": "False",
-      "required": false
-    },
-    "VERIFIED_TIME":{
-      "description": "Enter the number of days that you want the users to be verified",
-      "value": "1",
-      "required": false
-    },
-    "LOG_CHANNEL":{
-      "description": "Log Channel ID",
-      "value": "-100",
-      "required": true
-    },
-    "UPDATE_CHANNEL":{
-      "description": "Force subscription channel username without @",
-      "value": "",
-      "required": false
-    }
-    ,
+
     "BASE_SITE":{
       "description": "Default Shortener Website for users",
       "value": "droplink.co",
