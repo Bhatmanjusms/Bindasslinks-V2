@@ -568,7 +568,21 @@ async def link_bypass_cmd_handler(bot, message):
         await message.reply("Updated successfully")
     else:
         await message.reply(f"Link Bypass - {Config.LINK_BYPASS}\nEx: /link_bypass True")
-    
+  
+@Client.on_message(filters.command('welcome_image') & filters.private)
+async def welcome_image_cmd_handler(bot, message):
+    if message.from_user.id not in Config.ADMINS:
+        return
+    if len(message.command) == 2:
+        value = message.command[1]
+        await db.update_bot_vars({"welcome_image": value})
+        Config.WELCOME_IMAGE= value
+        await message.reply("Updated successfully")
+    else:
+        await message.reply(f"IMAGE - {Config.WELCOME_IMAGE}\nEx: /welcome_image url")
+ 
+  
+  
 @Client.on_message(filters.command('base_site') & filters.private)
 async def base_site_cmd_handler(bot, message):
     if message.from_user.id not in Config.ADMINS:
