@@ -115,16 +115,16 @@ START_MESSAGE_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Help',
 
 START_MESSAGE_KEYBOARD = ReplyKeyboardMarkup([ 
     [KeyboardButton(text="▶️ Start")], 
-    [KeyboardButton(text="🆘 Help"), KeyboardButton(text="About")],
-    [KeyboardButton(text="🛃 Method"), KeyboardButton(text="Mdisk API")],
-    [KeyboardButton(text="🔗 API"), KeyboardButton(text="Bitly API")],
-    [KeyboardButton(text="⬆️ Header"), KeyboardButton(text="Footer")],
-    [KeyboardButton(text="🏷 Username"), KeyboardButton(text="Hashtag")],
-    [KeyboardButton(text="⛓ Channel Link"), KeyboardButton(text="Banner Image")],
+    [KeyboardButton(text="🆘 Help"), KeyboardButton(text="📝 About")],
+    [KeyboardButton(text="🛃 Method"), KeyboardButton(text="Ⓜ️ Mdisk API")],
+    [KeyboardButton(text="🔗 API"), KeyboardButton(text="🅱 Bitly API")],
+    [KeyboardButton(text="⬆️ Header"), KeyboardButton(text="⬇️ Footer")],
+    [KeyboardButton(text="🏷 Username"), KeyboardButton(text="🔖 Hashtag")],
+    [KeyboardButton(text="⛓ Channel Link"), KeyboardButton(text="🏞 Banner Image")],
     [KeyboardButton(text="💡 Features"), KeyboardButton(text="⚙️ Settings")],
-    [KeyboardButton(text="💰 Balance"), KeyboardButton(text="Account")],
-    [KeyboardButton(text="📥 Direct Download Link"), KeyboardButton(text="Stream Link")],
-    [KeyboardButton(text="🗃 File Store Link"), KeyboardButton(text="Bypass")],
+    [KeyboardButton(text="💰 Balance"), KeyboardButton(text="🪪 Account")],
+    [KeyboardButton(text="📥 Direct Download Link"), KeyboardButton(text="📡 Stream Link")],
+    [KeyboardButton(text="🗃 File Store Link"), KeyboardButton(text="🔄 Bypass")],
     ])
 
 
