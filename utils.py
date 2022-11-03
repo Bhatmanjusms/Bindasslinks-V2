@@ -763,7 +763,8 @@ async def gen_link(m: Message,log_msg: Messages, user, mode):
 
         Stream_Text=Config.stream_msg_text.format(file_name, file_size) + txt
 
-    reply_markup=InlineKeyboardMarkup([[InlineKeyboardButton("🖥STREAM", url=page_link), InlineKeyboardButton("Dᴏᴡɴʟᴏᴀᴅ 📥", url=stream_link)],])
+    btn = [InlineKeyboardButton("🖥STREAM", url=page_link)] if mode == "stream" else [InlineKeyboardButton("Dᴏᴡɴʟᴏᴀᴅ 📥", url=stream_link)]
+    reply_markup=InlineKeyboardMarkup([btn,])
 
     return reply_markup, Stream_Text, stream_link
 
