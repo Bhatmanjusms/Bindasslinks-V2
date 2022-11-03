@@ -266,7 +266,7 @@ async def api_handler(bot, m:Message):
     except Exception as e:
         logging.error(e)
 
-@Client.on_message((filters.command('bitly_api') | filters.regex(r"Bitly API")) & filters.private )
+@Client.on_message((filters.command('bitly_api') | filters.regex(r"🅱 Bitly API")) & filters.private )
 async def bitly_api_handler(bot, m:Message):
     REPLY_MARKUP = InlineKeyboardMarkup([
         [
@@ -287,7 +287,7 @@ async def bitly_api_handler(bot, m:Message):
         await update_user_info(user_id, {"bitly_api": api})
         await m.reply(f"Bitly API updated successfully to {api}")
 
-@Client.on_message((filters.command('Header') | filters.regex("Header")) & filters.private )
+@Client.on_message((filters.command('Header') | filters.regex("⬆️ Header")) & filters.private )
 async def header_handler(bot, m:Message):
     cmd = m.command or []
 
@@ -302,7 +302,7 @@ async def header_handler(bot, m:Message):
         await update_user_info(user_id, {"header_text": header_text})
         await m.reply("Header Text Updated Successfully")
 
-@Client.on_message((filters.command('footer') | filters.regex("Footer")) & filters.private)
+@Client.on_message((filters.command('footer') | filters.regex("⬇️ Footer")) & filters.private)
 async def footer_handler(bot, m:Message):
     user_id = m.from_user.id
     cmd = m.command or []
@@ -317,7 +317,7 @@ async def footer_handler(bot, m:Message):
         await update_user_info(user_id, {"footer_text": footer_text})
         await m.reply("Footer Text Updated Successfully")
 
-@Client.on_message((filters.command('username') | filters.regex("Username")) & filters.private)
+@Client.on_message((filters.command('username') | filters.regex("🏷 Username")) & filters.private)
 async def username_handler(bot, m: Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -334,7 +334,7 @@ async def username_handler(bot, m: Message):
             await update_user_info(user_id, {"username": username})
             await m.reply(f"Username updated successfully to {username}")
 
-@Client.on_message((filters.command('hashtag') | filters.regex("Hashtag")) & filters.private)
+@Client.on_message((filters.command('hashtag') | filters.regex("🔖 Hashtag")) & filters.private)
 async def hashtag_handler(bot, m: Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -351,7 +351,7 @@ async def hashtag_handler(bot, m: Message):
             await update_user_info(user_id, {"hashtag": hashtag})
             await m.reply(f"Hashtag updated successfully to {hashtag}")
 
-@Client.on_message((filters.command('channel_link') | filters.regex("Channel Link")) & filters.private)
+@Client.on_message((filters.command('channel_link') | filters.regex("⛓ Channel Link")) & filters.private)
 async def pvt_links_handler(bot, m: Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -371,7 +371,7 @@ async def pvt_links_handler(bot, m: Message):
             await update_user_info(user_id, {"pvt_link": pvt_link})
             await m.reply(f"Private Link updated successfully to {pvt_link}")
 
-@Client.on_message((filters.command('banner_image')|filters.regex("Banner Image")) & filters.private)
+@Client.on_message((filters.command('banner_image')|filters.regex("🏞 Banner Image")) & filters.private)
 async def banner_image_handler(bot, m:Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
