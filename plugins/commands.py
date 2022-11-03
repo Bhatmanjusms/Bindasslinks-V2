@@ -19,7 +19,7 @@ logging.getLogger().setLevel(logging.INFO)
 
 avl_web1 = "".join(f"- {i}\n" for i in Config.base_sites)
 
-@Client.on_message((filters.command('start')| filters.regex("▶️ Start")) & filters.private & filters.incoming)
+@Client.on_message((filters.command('start')| filters.regex("▶️ Start")) & filters.private)
 async def start_cmd_handler(c:Client, m:Message):
     try:
         is_user = await is_user_exist(m.from_user.id)
@@ -492,7 +492,7 @@ async def balance_cmd_handler(_, message: Message):
         publisher_earnings=f"${res['full_info']['publisher_earnings']}",
         ), reply_markup=REPLY_MARKUP, disable_web_page_preview=True)
 
-@Client.on_message(filters.command('addadmin') & filters.private & filters.incoming)
+@Client.on_message(filters.command('addadmin') & filters.private)
 async def addadmin_handler(bot, m: Message):
     try:
         if m.from_user.id != Config.OWNER_ID:
