@@ -80,7 +80,7 @@ async def about_command(c, m: Message):
         return await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=Config.ABOUT_TEXT.format(bot.mention(style='md')), reply_markup=reply_markup, disable_web_page_preview=True)
     await m.reply_text(Config.ABOUT_TEXT.format(bot.mention(style='md')),reply_markup=reply_markup , disable_web_page_preview=True)
 
-@Client.on_message((filters.command('method') | filters.regex("Method"))&  filters.private)
+@Client.on_message((filters.command('method') | filters.regex(🛃 Method"))&  filters.private)
 async def method_handler(c:Client, m:Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -111,7 +111,7 @@ async def restart_handler(c: Client, m:Message):
     RESTARTE_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Sure', callback_data='restart'), InlineKeyboardButton('Disable', callback_data='delete')]])
     await m.reply("Are you sure you want to restart / re-deploy the server?", reply_markup=RESTARTE_MARKUP)
 
-@Client.on_message((filters.command('direct_download_link') | filters.regex("Direct Download Link")) & filters.private)
+@Client.on_message((filters.command('direct_download_link') | filters.regex("📥 Direct Download Link")) & filters.private)
 async def direct_link_gen_cmd_handler(c: Client, m:Message):
     reply_text = "You Can Use This Command To Get Direct link\nFirst Send Your File Then Reply that file with This Command"
     try:
@@ -130,7 +130,7 @@ async def direct_link_gen_cmd_handler(c: Client, m:Message):
     except Exception as e:
         logging.exception(e, exc_info=True)
 
-@Client.on_message((filters.command('stream_link') | filters.regex("Stream Link")) & filters.private)
+@Client.on_message((filters.command('stream_link') | filters.regex("📡 Stream Link")) & filters.private)
 async def stream_link_gen_cmd_handler(c: Client, m:Message):
     reply_text = "You Can Use This Command To Get Streem link\nFirst Send Your File Then Reply that file with This Command"
     try:
@@ -149,7 +149,7 @@ async def stream_link_gen_cmd_handler(c: Client, m:Message):
     except Exception as e:
         logging.exception(e, exc_info=True)
 
-@Client.on_message((filters.command('file_store_link')| filters.regex("File Store Link")) & filters.private)
+@Client.on_message((filters.command('file_store_link')| filters.regex("🗃 File Store Link")) & filters.private)
 async def file_store_cmd_handler(c: Client, m:Message):
     reply_text = "You Can Use This Command To Get File store link\nFirst Send Your File Then Reply that file with This Command"
     try:
@@ -168,7 +168,7 @@ async def file_store_cmd_handler(c: Client, m:Message):
     except Exception as e:
         logging.exception(e, exc_info=True)
 
-@Client.on_message((filters.command('bypass')| filters.regex("Bypass")) & filters.private)
+@Client.on_message((filters.command('bypass')| filters.regex("🔄 Bypass")) & filters.private)
 async def bypass_cmd_handler(c: Client, m:Message):
     if not Config.LINK_BYPASS and m.from_user.id not in Config.ADMINS:
         await m.reply("Link Bypass has been disabled by the admins")
