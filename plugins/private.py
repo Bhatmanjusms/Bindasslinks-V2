@@ -13,6 +13,7 @@ logger = logging.getLogger(__name__)
 # Private Chat
 @Client.on_message(filters.private & filters.incoming)
 async def private_link_handler(c:Client, message:Message):
+    print("Message Received")
     user = await get_user(message.from_user.id)
 
     try:
