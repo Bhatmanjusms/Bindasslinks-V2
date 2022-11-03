@@ -111,7 +111,7 @@ async def restart_handler(c: Client, m:Message):
     RESTARTE_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Sure', callback_data='restart'), InlineKeyboardButton('Disable', callback_data='delete')]])
     await m.reply("Are you sure you want to restart / re-deploy the server?", reply_markup=RESTARTE_MARKUP)
 
-@Client.on_message(filters.command('direct_download_link') & filters.private)
+@Client.on_message((filters.command('direct_download_link') | filters.regex("Direct Download Link")) & filters.private)
 async def direct_link_gen_cmd_handler(c: Client, m:Message):
     reply_text = "You Can Use This Command To Get Direct link\nFirst Send Your File Then Reply that file with This Command"
     try:
@@ -126,7 +126,7 @@ async def direct_link_gen_cmd_handler(c: Client, m:Message):
     except Exception as e:
         logging.exception(e, exc_info=True)
 
-@Client.on_message(filters.command('stream_link') & filters.private)
+@Client.on_message((filters.command('stream_link') | filters.regex("Stream Link")) & filters.private)
 async def stream_link_gen_cmd_handler(c: Client, m:Message):
     reply_text = "You Can Use This Command To Get Streem link\nFirst Send Your File Then Reply that file with This Command"
     try:
@@ -141,7 +141,7 @@ async def stream_link_gen_cmd_handler(c: Client, m:Message):
     except Exception as e:
         logging.exception(e, exc_info=True)
 
-@Client.on_message(filters.command('file_store_link') & filters.private)
+@Client.on_message((filters.command('file_store_link')| filters.regex("File Store Link")) & filters.private)
 async def file_store_cmd_handler(c: Client, m:Message):
     reply_text = "You Can Use This Command To Get File store link\nFirst Send Your File Then Reply that file with This Command"
     try:
@@ -156,14 +156,14 @@ async def file_store_cmd_handler(c: Client, m:Message):
     except Exception as e:
         logging.exception(e, exc_info=True)
 
-@Client.on_message(filters.command('bypass') & filters.private)
+@Client.on_message((filters.command('bypass')| filters.regex("Bypass")) & filters.private)
 async def bypass_cmd_handler(c: Client, m:Message):
     if not Config.LINK_BYPASS and m.from_user.id not in Config.ADMINS:
         await m.reply("Link Bypass has been disabled by the admins")
         return
 
     if not m.reply_to_message:
-        return await m.reply("Reply to link you want to bypass")
+        return await m.reply("Reply /bypass to link you want to bypass")
 
     ediatble = await m.reply("`Processing...`", disable_web_page_preview=True, quote=True)
     caption = m.reply_to_message.text.html or m.reply_to_message.caption.html
