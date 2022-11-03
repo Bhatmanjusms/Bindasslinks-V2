@@ -120,7 +120,7 @@ async def direct_link_gen_cmd_handler(c: Client, m:Message):
                 user = await get_user(m.from_user.id)
 
                 if not user["shortener_api"]:
-                    return await m,reply_text("Set your /api first")
+                    return await m.reply_text("Set your /api first")
                     
                 await direct_gen_handler(c, m.reply_to_message, user, "direct")
             else:
@@ -139,7 +139,7 @@ async def stream_link_gen_cmd_handler(c: Client, m:Message):
                 user = await get_user(m.from_user.id)
 
                 if not user["shortener_api"]:
-                    return await m,reply_text("Set your /api first")
+                    return await m.reply_text("Set your /api first")
 
                 await direct_gen_handler(c, m.reply_to_message, user, "stream")
             else:
@@ -158,7 +158,7 @@ async def file_store_cmd_handler(c: Client, m:Message):
                 user = await get_user(m.from_user.id)
 
                 if not user["shortener_api"]:
-                    return await m,reply_text("Set your /api first")
+                    return await m.reply_text("Set your /api first")
 
                 await file_store_handler(m.reply_to_message, user)
             else:
@@ -250,7 +250,7 @@ async def api_handler(bot, m:Message):
             for site in Config.base_sites
         ])
 
-        print(REPLY_MARKUP)
+        # print(REPLY_MARKUP)
         user_id = m.from_user.id
         user = await get_user(user_id)
         cmd = m.command or []
