@@ -10,9 +10,10 @@ from utils import (extract_link, main_convertor_handler, update_stats,
 
 logger = logging.getLogger(__name__)
 
+print(__name__)
 #
 @Client.on_message(filters.private & filters.incoming)
-async def private_link_handler(c:Client, message:Message):
+async def private_link_main_handler(c:Client, message:Message):
     print("Message Received")
     user = await get_user(message.from_user.id)
 
