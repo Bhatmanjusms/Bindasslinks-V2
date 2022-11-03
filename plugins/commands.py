@@ -80,7 +80,7 @@ async def about_command(c, m: Message):
         return await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=Config.ABOUT_TEXT.format(bot.mention(style='md')), reply_markup=reply_markup, disable_web_page_preview=True)
     await m.reply_text(Config.ABOUT_TEXT.format(bot.mention(style='md')),reply_markup=reply_markup , disable_web_page_preview=True)
 
-@Client.on_message((filters.command('method') | filters.regex(🛃 Method"))&  filters.private)
+@Client.on_message((filters.command('method') | filters.regex("🛃 Method"))&  filters.private)
 async def method_handler(c:Client, m:Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
