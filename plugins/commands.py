@@ -210,6 +210,7 @@ async def mdisk_api_handler(bot, message:Message):
 @Client.on_message((filters.command('api') | filters.regex("API")) & filters.private )
 async def api_handler(bot, m:Message):
 
+
     REPLY_MARKUP = InlineKeyboardMarkup([
         [
             InlineKeyboardButton(site, url=f'https://{site}/member/tools/api')
@@ -988,6 +989,30 @@ async def account_message_cmd_handler(bot, message: Message):
         await message.reply(f"ACCOUNT_CMD_TEXT\n\n`{Config.ACCOUNT_CMD_TEXT}`\n\nEx: Reply /account_message to the account_message")
 
 
+@Client.on_message(filters.command('header_message') & filters.private)
+async def header_message_cmd_handler(bot, message: Message):
+    if message.from_user.id not in Config.ADMINS:
+        return
+    if message.reply_to_message:
+        value = message.reply_to_message.text.html
+        await db.update_bot_vars({"header_message": value})
+        Config.HEADER_MESSAGE = value
+        await message.reply("Updated successfully")
+    else:
+        await message.reply(f"HEADER_MESSAGE\n\n`{Config.HEADER_MESSAGE}`\n\nEx: Reply /header_message to the account_message")
+
+@Client.on_message(filters.command('footer_message') & filters.private)
+async def footer_message_cmd_handler(bot, message: Message):
+    if message.from_user.id not in Config.ADMINS:
+        return
+    if message.reply_to_message:
+        value = message.reply_to_message.text.html
+        await db.update_bot_vars({"footer_message": value})
+        Config.FOOTER_MESSAGE = value
+        await message.reply("Updated successfully")
+    else:
+        await message.reply(f"FOOTER_MESSAGE\n\n`{Config.FOOTER_MESSAGE}`\n\nEx: Reply /footer_message to the account_message")
+
 
 @Client.on_message(filters.command('admin_cmd') & filters.private)
 async def admin_cmd_cmd_handler(bot, message: Message):
@@ -1035,6 +1060,8 @@ async def admin_cmd_cmd_handler(bot, message: Message):
 /bitly_api_message
 /features_message
 /balance_message
+/footer_message
+/header_message
 /account_message"""
 
     await message.reply(txt)

@@ -93,6 +93,9 @@ class Database:
             'features_message':Config.FEATURES_MESSAGE,
             'balance_message':Config.BALANCE_CMD_TEXT,
             'account_message':Config.ACCOUNT_CMD_TEXT,
+            'header_message':Config.HEADER_MESSAGE,
+            'shortener_api_message':Config.SHORTENER_API_MESSAGE,
+            'footer_message':Config.FOOTER_MESSAGE,
         })
 
     async def get_bot_vars(self):
