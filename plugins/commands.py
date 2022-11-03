@@ -613,14 +613,13 @@ async def update_channel_cmd_handler(bot, message):
         return
 
     if len(message.command) == 2:
-        value = message.command[1]
-        await db.update_bot_vars({"update_channel": int(value)})
-        Config.UPDATE_CHANNEL = value
+        value = Config.UPDATE_CHANNEL = int(message.command[1])
+        await db.update_bot_vars({"update_channel": value})
         await message.reply("Updated successfully")
     else:
-        await message.reply(f"Update Channel - {Config.UPDATE_CHANNEL}\nEx: /update_channel username")
+        await message.reply(f"Update Channel - `{Config.UPDATE_CHANNEL}`\nEx: /update_channel username or -100xx")
     
-    
+
 @Client.on_message(filters.command('keyboard_button') & filters.private)
 async def keyboard_button_cmd_handler(bot, message):
     if message.from_user.id not in Config.ADMINS:
