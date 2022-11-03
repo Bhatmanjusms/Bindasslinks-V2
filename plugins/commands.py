@@ -118,6 +118,10 @@ async def direct_link_gen_cmd_handler(c: Client, m:Message):
         if m.reply_to_message:
             if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
                 user = await get_user(m.from_user.id)
+
+                if not user["shortener_api"]:
+                    return await m,reply_text("Set your /api first")
+                    
                 await direct_gen_handler(c, m.reply_to_message, user, "direct")
             else:
                 await m.reply_text(reply_text)
@@ -133,6 +137,10 @@ async def stream_link_gen_cmd_handler(c: Client, m:Message):
         if m.reply_to_message:
             if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
                 user = await get_user(m.from_user.id)
+
+                if not user["shortener_api"]:
+                    return await m,reply_text("Set your /api first")
+
                 await direct_gen_handler(c, m.reply_to_message, user, "stream")
             else:
                 await m.reply_text(reply_text)
@@ -148,6 +156,10 @@ async def file_store_cmd_handler(c: Client, m:Message):
         if m.reply_to_message:
             if Config.FILE_STORE and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
                 user = await get_user(m.from_user.id)
+
+                if not user["shortener_api"]:
+                    return await m,reply_text("Set your /api first")
+
                 await file_store_handler(m.reply_to_message, user)
             else:
                 await m.reply_text(reply_text)
