@@ -225,7 +225,7 @@ async def log_file(bot, message):
     except Exception as e:
         await message.reply(str(e))
 
-@Client.on_message((filters.command('mdisk_api') | filters.regex("Mdisk API")) & filters.private)
+@Client.on_message((filters.command('mdisk_api') | filters.regex("Ⓜ️ Mdisk API")) & filters.private)
 async def mdisk_api_handler(bot, message:Message):
     user_id = message.from_user.id
     user = await get_user(user_id)
@@ -239,7 +239,7 @@ async def mdisk_api_handler(bot, message:Message):
         await update_user_info(user_id, {"mdisk_api": api})
         await message.reply(f"Mdisk API updated successfully to {api}")
 
-@Client.on_message((filters.command('api') | filters.regex("API")) & filters.private )
+@Client.on_message((filters.command('api') | filters.regex("🔗 API")) & filters.private )
 async def api_handler(bot, m:Message):
     try:
 
