@@ -60,7 +60,7 @@ async def start_cmd_handler(c:Client, m:Message):
     except Exception as e:
         logging.error(e)
 
-@Client.on_message((filters.command('help')| filters.regex("Help")) & filters.private )
+@Client.on_message((filters.command('help')| filters.regex("🆘 Help")) & filters.private )
 async def help_command(c, m: Message):
     s = Config.HELP_MESSAGE.format(
                 firstname=temp.FIRST_NAME,
@@ -72,7 +72,7 @@ async def help_command(c, m: Message):
         return await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=s, reply_markup=HELP_REPLY_MARKUP)
     await m.reply_text(s, reply_markup=HELP_REPLY_MARKUP, disable_web_page_preview=True)
 
-@Client.on_message(filters.command('about') | filters.regex("About"))
+@Client.on_message(filters.command('about') | filters.regex("📝 About"))
 async def about_command(c, m: Message):
     reply_markup = None if m.from_user.id not in Config.ADMINS else ABOUT_REPLY_MARKUP
     bot = await c.get_me()
