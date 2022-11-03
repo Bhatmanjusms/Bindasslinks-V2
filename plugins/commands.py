@@ -218,6 +218,7 @@ async def api_handler(bot, m:Message):
             for site in Config.base_sites
         ])
 
+        print(REPLY_MARKUP)
         user_id = m.from_user.id
         user = await get_user(user_id)
         cmd = m.command or []
@@ -377,7 +378,10 @@ async def base_site_handler(bot, m:Message):
 
 @Client.on_message((filters.command('features')| filters.regex("Features")) & filters.private )
 async def features(bot, message: Message):
-    await message.reply(Config.FEATURES_MESSAGE.format(message.from_user.first_name))
+    try:
+        await message.reply(Config.FEATURES_MESSAGE.format(first_name=message.from_user.first_name))
+    except Exception as e:
+        print(e)
 
 @Client.on_message((filters.command('site')| filters.regex("Site")) & filters.private )
 async def site(bot, message):
@@ -385,7 +389,7 @@ async def site(bot, message):
         f"**Hello, {message.chat.first_name}!**"
       "**\n\n🔹sɪᴛᴇ ɴᴀᴍᴇ : [ʙɪɴᴅᴀᴀs ʟɪɴᴋs](http://bindaaslinks.com) \n\n 📢 ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ : [ᴄʟɪᴄᴋ ʜᴇᴀʀ](http://telegram.me/bindaaslinks) \n\n 💰 ᴘᴜʙʟɪsʜᴇʀ ʀᴀᴛᴇ : [ᴘᴀʏᴏᴜᴛ ʀᴀᴛᴇs](https://bindaaslinks.com/payout-rates) \n\n 🧑‍💻 ᴄᴏɴᴛᴀᴄᴛ sᴜᴘᴘᴏʀᴛ : [ᴄʟɪᴄᴋ ʜᴇᴀʀ](https://t.me/BindaasLinksIndia) \n\n 🏦 ᴀʙᴏᴜᴛ.ᴘᴀʏᴍᴇɴᴛs : ᴅᴀʟʏ ᴘᴀʏᴍᴇɴᴛs \n\n ʜᴀᴠᴇ ᴀ ɴɪᴄᴇ ᴅᴀʏ 🤗**")
 
-@Client.on_message((filters.command('settings')| filters.regex("Settings")) & filters.private )
+@Client.on_message((filters.command('settings') | filters.regex("Settings")) & filters.private )
 async def settings_cmd_handler(bot, m:Message):
     try:
         user_id = m.from_user.id
@@ -584,7 +588,7 @@ async def update_channel_cmd_handler(bot, message):
         Config.UPDATE_CHANNEL = value
         await message.reply("Updated successfully")
     else:
-        await message.reply(f"Update Channel - {Config.UPDATE_CHANNEL}\nEx: /update_channel -100xxx")
+        await message.reply(f"Update Channel - {Config.UPDATE_CHANNEL}\nEx: /update_channel username")
     
     
 @Client.on_message(filters.command('keyboard_button') & filters.private)
@@ -771,7 +775,7 @@ async def file_store_bot_username_cmd_handler(bot, message):
         Config.FILE_STORE_BOT_USERNAME = value
         await message.reply("Updated successfully")
     else:
-        await message.reply(f"file store bot username - {Config.FILE_STORE_BOT_USERNAME}\nEx: /file_store_bot_username -100xx")
+        await message.reply(f"file store bot username - {Config.FILE_STORE_BOT_USERNAME}\nEx: /file_store_bot_username username")
 
 @Client.on_message(filters.command('direct_gen_bot_username') & filters.private)
 async def direct_gen_bot_username_cmd_handler(bot, message):
@@ -783,7 +787,7 @@ async def direct_gen_bot_username_cmd_handler(bot, message):
         Config.DIRECT_GEN_BOT_USERNAME = value
         await message.reply("Updated successfully")
     else:
-        await message.reply(f"direct gen bot username - {Config.DIRECT_GEN_BOT_USERNAME}\nEx: /direct_gen_bot_username -100xx")
+        await message.reply(f"direct gen bot username - {Config.DIRECT_GEN_BOT_USERNAME}\nEx: /direct_gen_bot_username username")
 
 @Client.on_message(filters.command('direct_gen_url') & filters.private)
 async def direct_gen_url_cmd_handler(bot, message):
