@@ -54,7 +54,7 @@ class Config(object):
 
     VERIFIED_TIME = 1
     LOG_CHANNEL = 0
-    UPDATE_CHANNEL =False
+    UPDATE_CHANNEL = False
     KEYBOARD_BUTTON = True
 
     IS_MDISK = True
