@@ -114,7 +114,7 @@ ABOUT_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Home', callbac
 START_MESSAGE_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data='help_command'), InlineKeyboardButton('About', callback_data='about_command')], [InlineKeyboardButton('Method', callback_data='method_command'), InlineKeyboardButton('Join Channel♥️', url=f'https://telegram.me/{Config.USERNAME}')], [InlineKeyboardButton('Close', callback_data='delete')]])
 
 START_MESSAGE_KEYBOARD = ReplyKeyboardMarkup([ 
-    [KeyboardButton(text="Start")], 
+    [KeyboardButton(text="▶️ Start")], 
     [KeyboardButton(text="Help"), KeyboardButton(text="About")],
     [KeyboardButton(text="Method"), KeyboardButton(text="Mdisk API")],
     [KeyboardButton(text="API"), KeyboardButton(text="Bitly API")],
