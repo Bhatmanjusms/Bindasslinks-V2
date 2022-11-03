@@ -113,28 +113,48 @@ async def restart_handler(c: Client, m:Message):
 
 @Client.on_message(filters.command('direct_download_link') & filters.private)
 async def direct_link_gen_cmd_handler(c: Client, m:Message):
+    reply_text = "You Can Use This Command To Get Direct link\nFirst Send Your File Then Reply that file with This Command"
     try:
-        if Config.DIRECT_GEN and (m.video or m.document or m.audio):
-            user = await get_user(m.from_user.id)
-            await direct_gen_handler(c, m, user, "direct")
+        if m.reply_to_message:
+            if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
+                user = await get_user(m.from_user.id)
+                await direct_gen_handler(c, m.reply_to_message, user, "direct")
+            else:
+                await m.reply_text(reply_text)
+        else:
+            await m.reply_text(reply_text)
     except Exception as e:
         logging.exception(e, exc_info=True)
 
 @Client.on_message(filters.command('stream_link') & filters.private)
 async def stream_link_gen_cmd_handler(c: Client, m:Message):
+    reply_text = "You Can Use This Command To Get Streem link\nFirst Send Your File Then Reply that file with This Command"
     try:
-        if Config.DIRECT_GEN and (m.video or m.document or m.audio):
-            user = await get_user(m.from_user.id)
-            await direct_gen_handler(c, m, user, "stream")
+        if m.reply_to_message:
+            if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
+                user = await get_user(m.from_user.id)
+                await direct_gen_handler(c, m.reply_to_message, user, "stream")
+            else:
+                await m.reply_text(reply_text)
+        else:
+            await m.reply_text(reply_text)
     except Exception as e:
         logging.exception(e, exc_info=True)
 
 @Client.on_message(filters.command('file_store_link') & filters.private)
 async def file_store_cmd_handler(c: Client, m:Message):
-    if Config.FILE_STORE and (m.video or m.document or m.audio):
-        user = await get_user(m.from_user.id)
-        await file_store_handler(m, user)
-        return
+    reply_text = "You Can Use This Command To Get File store link\nFirst Send Your File Then Reply that file with This Command"
+    try:
+        if m.reply_to_message:
+            if Config.FILE_STORE and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
+                user = await get_user(m.from_user.id)
+                await file_store_handler(m.reply_to_message, user)
+            else:
+                await m.reply_text(reply_text)
+        else:
+            await m.reply_text(reply_text)
+    except Exception as e:
+        logging.exception(e, exc_info=True)
 
 @Client.on_message(filters.command('bypass') & filters.private)
 async def bypass_cmd_handler(c: Client, m:Message):
@@ -501,7 +521,6 @@ async def addadmin_handler(bot, m: Message):
             logging.error(e)
             return await m.reply("Some error updating admin list")
 
-
 @Client.on_message(filters.command('broadcast_as_copy') & filters.private)
 async def broadcast_as_copy_cmd_handler(bot, message: Message):
     if message.from_user.id not in Config.ADMINS:
@@ -513,8 +532,7 @@ async def broadcast_as_copy_cmd_handler(bot, message: Message):
         await message.reply("Updated successfully")
     else:
         await message.reply(f"Broadcast as Copy - {Config.BROADCAST_AS_COPY}\nEx: /broadcast_as_copy True")
-    
-    
+     
 @Client.on_message(filters.command('is_private') & filters.private)
 async def is_private_cmd_handler(bot, message):
     if message.from_user.id not in Config.ADMINS:
