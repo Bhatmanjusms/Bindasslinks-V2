@@ -40,7 +40,6 @@ class Config(object):
     BANNER_IMAGE = ''
     WELCOME_IMAGE = ''
     LINK_BYPASS = False
-    BASE_SITE =''
 
     #  Heroku Config
     HEROKU_API_KEY = os.environ.get("HEROKU_API_KEY", None)
@@ -84,7 +83,7 @@ class Config(object):
 <b>📂 File Name :</b> {}\n
 <b>📦 File Size :</b> {}\n"""
 
-
+    BASE_SITE = os.environ.get('BASE_SITE', None)
     BASE_SITE_2 = os.environ.get('BASE_SITE_2', None)
     BASE_SITE_3 = os.environ.get('BASE_SITE_3', None)
 

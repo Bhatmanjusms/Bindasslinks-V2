@@ -797,7 +797,6 @@ async def make_vars():
     Config.BANNER_IMAGE =bot_vars['banner_image']
     Config.WELCOME_IMAGE =bot_vars['welcome_image']
     Config.LINK_BYPASS = bot_vars['link_bypass']
-    Config.BASE_SITE = bot_vars['base_site']
     Config.VERIFIED_TIME = bot_vars['verified_time']
     Config.LOG_CHANNEL = bot_vars['log_channel']
     Config.UPDATE_CHANNEL = bot_vars['update_channel']
