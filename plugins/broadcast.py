@@ -16,8 +16,10 @@ from database import get_all_users, total_users_count, delete_user
 
 broadcast_ids = {}
 
-@Client.on_message(filters.command("broadcast") & filters.private & filters.chat(Config.ADMINS))
+@Client.on_message(filters.command("broadcast") & filters.private)
 async def broadcast_handler(c:Client, m:Message):
+    if m.from_user.id not in Config.ADMINS:
+        return
     if m.reply_to_message:
         try:
             await main_broadcast_handler(m)
