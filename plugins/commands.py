@@ -409,7 +409,7 @@ async def site(bot, message):
         f"**Hello, {message.chat.first_name}!**"
       "**\n\n🔹sɪᴛᴇ ɴᴀᴍᴇ : [ʙɪɴᴅᴀᴀs ʟɪɴᴋs](http://bindaaslinks.com) \n\n 📢 ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ : [ᴄʟɪᴄᴋ ʜᴇᴀʀ](http://telegram.me/bindaaslinks) \n\n 💰 ᴘᴜʙʟɪsʜᴇʀ ʀᴀᴛᴇ : [ᴘᴀʏᴏᴜᴛ ʀᴀᴛᴇs](https://bindaaslinks.com/payout-rates) \n\n 🧑‍💻 ᴄᴏɴᴛᴀᴄᴛ sᴜᴘᴘᴏʀᴛ : [ᴄʟɪᴄᴋ ʜᴇᴀʀ](https://t.me/BindaasLinksIndia) \n\n 🏦 ᴀʙᴏᴜᴛ.ᴘᴀʏᴍᴇɴᴛs : ᴅᴀʟʏ ᴘᴀʏᴍᴇɴᴛs \n\n ʜᴀᴠᴇ ᴀ ɴɪᴄᴇ ᴅᴀʏ 🤗**")
 
-@Client.on_message((filters.command('settings') | filters.regex("⚙️Settings")) & filters.private )
+@Client.on_message((filters.command('settings') | filters.regex("⚙️ Settings")) & filters.private )
 async def settings_cmd_handler(bot, m:Message):
     try:
         user_id = m.from_user.id
