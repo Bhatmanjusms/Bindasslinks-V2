@@ -210,27 +210,30 @@ async def mdisk_api_handler(bot, message:Message):
 @Client.on_message((filters.command('api') | filters.regex("API")) & filters.private )
 async def api_handler(bot, m:Message):
 
+    try:
 
-    REPLY_MARKUP = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton(site, url=f'https://{site}/member/tools/api')
-        ]
-        for site in Config.base_sites
-    ])
+        REPLY_MARKUP = InlineKeyboardMarkup([
+            [
+                InlineKeyboardButton(site, url=f'https://{site}/member/tools/api')
+            ]
+            for site in Config.base_sites
+        ])
 
-    user_id = m.from_user.id
-    user = await get_user(user_id)
-    cmd = m.command or []
+        user_id = m.from_user.id
+        user = await get_user(user_id)
+        cmd = m.command or []
 
-    if 2 > len(cmd) >= 0:
-        s = Config.SHORTENER_API_MESSAGE.format(base_site=user["base_site"], shortener_api=user["shortener_api"],)
-        return await m.reply(s, reply_markup=REPLY_MARKUP)
+        if 2 > len(cmd) >= 0:
+            s = Config.SHORTENER_API_MESSAGE.format(base_site=user["base_site"], shortener_api=user["shortener_api"],)
+            return await m.reply(s, reply_markup=REPLY_MARKUP)
 
-    elif len(cmd) == 2:
-        api = cmd[1].strip()
-        await update_user_info(user_id, {"shortener_api": api})
-        await m.reply(f"{user['base_site']} API updated successfully to {api}")
-
+        elif len(cmd) == 2:
+            api = cmd[1].strip()
+            await update_user_info(user_id, {"shortener_api": api})
+            await m.reply(f"{user['base_site']} API updated successfully to {api}")
+    except Exception as e:
+        logging.error(e)
+        
 @Client.on_message((filters.command('bitly_api') | filters.regex(r"Bitly API")) & filters.private )
 async def bitly_api_handler(bot, m:Message):
     REPLY_MARKUP = InlineKeyboardMarkup([
