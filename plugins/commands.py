@@ -408,7 +408,7 @@ async def base_site_handler(bot, m:Message):
     disable_web_page_preview=True,
     reply_markup=BASE_SITE_REPLY_MARKUP)
 
-@Client.on_message((filters.command('features')| filters.regex("Features")) & filters.private )
+@Client.on_message((filters.command('features')| filters.regex("💡 Features")) & filters.private )
 async def features(bot, message: Message):
     try:
         await message.reply(Config.FEATURES_MESSAGE.format(first_name=message.from_user.first_name))
@@ -445,7 +445,7 @@ async def deny_access_cmd_handler(c:Client,query: Message):
     else:
         await query.reply_text("Bot is Public")
 
-@Client.on_message((filters.command('account')| filters.regex("Account")) & filters.private)
+@Client.on_message((filters.command('account')| filters.regex("🪪 Account")) & filters.private)
 async def account_cmd_handler(_, message: Message):
     user = await get_user(message.from_user.id)
 
@@ -469,7 +469,7 @@ async def account_cmd_handler(_, message: Message):
         referral_link=ref_link,
         ),reply_markup=REPLY_MARKUP, disable_web_page_preview=True)
 
-@Client.on_message((filters.command('balance')| filters.regex("Balance")) & filters.private)
+@Client.on_message((filters.command('balance')| filters.regex("💰 Balance")) & filters.private)
 async def balance_cmd_handler(_, message: Message):
     user = await get_user(message.from_user.id)
 
