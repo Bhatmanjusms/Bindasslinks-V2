@@ -14,7 +14,6 @@ from pyrogram.types import (CallbackQuery, InlineKeyboardButton,
                             InlineKeyboardMarkup)
 from translation import (ABOUT_REPLY_MARKUP,
                          BACK_REPLY_MARKUP, HELP_REPLY_MARKUP,
-                         METHOD_REPLY_MARKUP,
                          START_MESSAGE_REPLY_MARKUP)
 from utils import get_me_button
 
@@ -133,6 +132,14 @@ async def on_callback_query(bot:Client, query:CallbackQuery):
 
     elif query.data == 'method_command':
         s = Config.METHOD_MESSAGE.format(method=user["method"], shortener=user["base_site"],)
+        
+        if Config.IS_MDISK:
+            method_btn = [[InlineKeyboardButton('Mdisk+shortner', callback_data='change_method#mdlink'), InlineKeyboardButton('Shortener', callback_data='change_method#shortener'), InlineKeyboardButton('Mdisk', callback_data='change_method#mdisk')], [InlineKeyboardButton('Back', callback_data='help_command'), InlineKeyboardButton('Close', callback_data='delete')]]
+        else:
+            method_btn = [[InlineKeyboardButton('Mdisk+Shortner', callback_data='change_method#mdlink'), InlineKeyboardButton('Shortener', callback_data='change_method#shortener')], [InlineKeyboardButton('Back', callback_data='help_command'), InlineKeyboardButton('Close', callback_data='delete')]]
+
+        METHOD_REPLY_MARKUP = InlineKeyboardMarkup(method_btn)
+
         return await query.message.edit(s, reply_markup=METHOD_REPLY_MARKUP)
 
     elif query.data == 'cbatch_command':

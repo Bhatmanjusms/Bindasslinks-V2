@@ -4,7 +4,6 @@ import sys
 from pyrogram import Client
 from config import Config
 from database import db
-from database.users import update_existing_users
 from helpers import temp, ping_server
 from utils import _update_existing_users, broadcast_admins, make_vars
 

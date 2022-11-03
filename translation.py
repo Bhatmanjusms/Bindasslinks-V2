@@ -1,4 +1,4 @@
-from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup
+from pyrogram.types import InlineKeyboardMarkup, InlineKeyboardButton, KeyboardButton, ReplyKeyboardMarkup, ReplyKeyboardRemove
 from config import Config
 
 
@@ -69,12 +69,11 @@ Config.ABOUT_TEXT = """**👉Know More:
 sᴏ ɴᴏᴡ sᴇɴᴅ ᴍᴇ ᴛʜᴇ ʟɪɴᴋs, ɪ ᴡɪʟʟ ᴄᴏɴᴠᴇʀᴛ ɪᴛ ᴀɴᴅ ɢɪᴠᴇ ɪᴛ ᴛᴏ ʏᴏᴜ 😊  ɪғ ʏᴏᴜ ɴᴇᴇᴅ sᴀᴍᴇ ʙᴏᴛ ᴛᴏ ʏᴏᴜ'ʀᴇ sʜᴏʀᴛɴᴇʀ ᴛʜᴇɴ ᴄᴏɴᴛᴀᴄᴛ @CR_0O0
 **"""
 
-
 is_mdisk = "\n> `mdisk` - Save all the links of the post to your Mdisk account.\n"
 
 Config.METHOD_MESSAGE = """
 Current Method: {method}
-    
+                
 Methods Available:
 
 > `Mdiak+shortner` - Change all the links of the post to your MDisk account first and then short to {shortener} link.
@@ -82,7 +81,7 @@ Methods Available:
 > `shortener` - Short all the links of the post to link directly.
 %s
 To change method, choose it from the following options:
-""" % is_mdisk if Config.IS_MDISK else ''
+            """ % is_mdisk if Config.IS_MDISK else ''
 
 
 Config.CUSTOM_ALIAS_MESSAGE = """For custom alias, `[link] | [custom_alias]`, Send in this format
@@ -114,24 +113,18 @@ ABOUT_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Home', callbac
 
 START_MESSAGE_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data='help_command'), InlineKeyboardButton('About', callback_data='about_command')], [InlineKeyboardButton('Method', callback_data='method_command'), InlineKeyboardButton('Join Channel♥️', url=f'https://telegram.me/{Config.USERNAME}')], [InlineKeyboardButton('Close', callback_data='delete')]])
 
-START_MESSAGE_KEYBOARD = ReplyKeyboardMarkup([  
+START_MESSAGE_KEYBOARD = ReplyKeyboardMarkup([ 
+    [KeyboardButton(text="Start")], 
+    [KeyboardButton(text="Help"), KeyboardButton(text="About")],
     [KeyboardButton(text="Method"), KeyboardButton(text="Mdisk API")],
     [KeyboardButton(text="API"), KeyboardButton(text="Bitly API")],
     [KeyboardButton(text="Header"), KeyboardButton(text="Footer")],
     [KeyboardButton(text="Username"), KeyboardButton(text="Hashtag")],
     [KeyboardButton(text="Channel Link"), KeyboardButton(text="Banner Image")],
-    [KeyboardButton(text="Features"), KeyboardButton(text="Site")],
+    [KeyboardButton(text="Features"), KeyboardButton(text="Settings")],
     [KeyboardButton(text="Balance"), KeyboardButton(text="Account")],
-    [KeyboardButton(text="Settings"),],
     ])
 
-if Config.IS_MDISK:
-    method_btn = [[InlineKeyboardButton('Mdisk+shortner', callback_data='change_method#mdlink'), InlineKeyboardButton('Shortener', callback_data='change_method#shortener'), InlineKeyboardButton('Mdisk', callback_data='change_method#mdisk')], [InlineKeyboardButton('Back', callback_data='help_command'), InlineKeyboardButton('Close', callback_data='delete')]]
-else:
-    method_btn = [[InlineKeyboardButton('Mdisk+Shortner', callback_data='change_method#mdlink'), InlineKeyboardButton('Shortener', callback_data='change_method#shortener')], [InlineKeyboardButton('Back', callback_data='help_command'), InlineKeyboardButton('Close', callback_data='delete')]]
-
-
-METHOD_REPLY_MARKUP = InlineKeyboardMarkup(method_btn)
 
 BACK_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Back', callback_data='help_command')]])
 

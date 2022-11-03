@@ -19,8 +19,8 @@ logging.getLogger().setLevel(logging.INFO)
 
 avl_web1 = "".join(f"- {i}\n" for i in Config.base_sites)
 
-@Client.on_message(filters.command('start') & filters.private & filters.incoming)
-async def start(c:Client, m:Message):
+@Client.on_message((filters.command('start')| filters.regex("Start")) & filters.private & filters.incoming)
+async def start_cmd_handler(c:Client, m:Message):
     try:
         is_user = await is_user_exist(m.from_user.id)
         if not is_user and Config.LOG_CHANNEL: await c.send_message(Config.LOG_CHANNEL, f"#NewUser\n\nUser ID: `{m.from_user.id}`\nName: {m.from_user.mention}", )
@@ -29,8 +29,9 @@ async def start(c:Client, m:Message):
         except Exception:
             logging.error("Error creating new user: {0}".format(m.from_user.mention), exc_info=True)
             new_user = await get_user(m.from_user.id)
+        cmd = m.command or []
 
-        if len(m.command) >= 2:
+        if len(cmd) >= 2:
             try:
                 _, user_api, site = m.command[1].strip().split('_')
                 site = site.replace("dot", ".")
@@ -48,10 +49,14 @@ async def start(c:Client, m:Message):
 
         t = Config.START_MESSAGE.format(m.from_user.mention, new_user["method"], new_user["base_site"])
 
+        reply_markup = None if Config.KEYBOARD_BUTTON else ReplyKeyboardRemove()
+        editable = await m.reply_text("`Processing...`", reply_markup=reply_markup)
+        await editable.delete()
         reply_markup = START_MESSAGE_KEYBOARD if Config.KEYBOARD_BUTTON else START_MESSAGE_REPLY_MARKUP
         if Config.WELCOME_IMAGE:
-            return await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=t, reply_markup=reply_markup)
-        await m.reply_text(t, reply_markup=reply_markup, disable_web_page_preview=True)
+            await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=t, reply_markup=reply_markup)
+        await m.reply(t, reply_markup=reply_markup, disable_web_page_preview=True)
+
     except Exception as e:
         logging.error(e)
 
@@ -80,6 +85,14 @@ async def method_handler(c:Client, m:Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
     cmd = m.command or []
+    
+    if Config.IS_MDISK:
+        method_btn = [[InlineKeyboardButton('Mdisk+shortner', callback_data='change_method#mdlink'), InlineKeyboardButton('Shortener', callback_data='change_method#shortener'), InlineKeyboardButton('Mdisk', callback_data='change_method#mdisk')], [InlineKeyboardButton('Back', callback_data='help_command'), InlineKeyboardButton('Close', callback_data='delete')]]
+    else:
+        method_btn = [[InlineKeyboardButton('Mdisk+Shortner', callback_data='change_method#mdlink'), InlineKeyboardButton('Shortener', callback_data='change_method#shortener')], [InlineKeyboardButton('Back', callback_data='help_command'), InlineKeyboardButton('Close', callback_data='delete')]]
+
+
+    METHOD_REPLY_MARKUP = InlineKeyboardMarkup(method_btn)
 
     if 2 > len(cmd) >= 0:
         s = Config.METHOD_MESSAGE.format(method=user["method"], shortener=user["base_site"],)
@@ -91,8 +104,10 @@ async def method_handler(c:Client, m:Message):
         await update_user_info(user_id, {"method": method })
         await m.reply(f"Method updated successfully to {method}")
 
-@Client.on_message(filters.command('restart') & filters.user(Config.ADMINS) & filters.private)
+@Client.on_message(filters.command('restart') & filters.private)
 async def restart_handler(c: Client, m:Message):
+    if m.from_user.id not in Config.ADMINS:
+        return
     RESTARTE_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Sure', callback_data='restart'), InlineKeyboardButton('Disable', callback_data='delete')]])
     await m.reply("Are you sure you want to restart / re-deploy the server?", reply_markup=RESTARTE_MARKUP)
 
@@ -328,7 +343,7 @@ async def banner_image_handler(bot, m:Message):
 
     if  2 > len(cmd) >= 0:
         if not m.reply_to_message or not m.reply_to_message.photo:
-            return await m.reply_photo(user["banner_image"], caption=Config.BANNER_IMAGE_TEXT) if user["banner_image"] else await m.reply("Current Banner Image URL: None\n" + Config.BANNER_IMAGE_TEXT)
+            return await m.reply_photo(user["banner_image"], caption=Config.BANNER_IMAGE_TEXT.format(banner_image=user["banner_image"])) if user["banner_image"] else await m.reply(Config.BANNER_IMAGE_TEXT.format(banner_image=None))
         # Getting the file_id of the photo that was sent to the bot.
         fileid = m.reply_to_message.photo.file_id
         await update_user_info(user_id, {"banner_image": fileid})
@@ -435,7 +450,7 @@ async def balance_cmd_handler(_, message: Message):
         username=res['username'],
         available_balance=res['stats']['available_balance'],
         referral_earnings=res['stats']['referral_earnings'],
-        publisher_earnings=res['full_info']['publisher_earnings'],
+        publisher_earnings=f"${res['full_info']['publisher_earnings']}",
         ), reply_markup=REPLY_MARKUP, disable_web_page_preview=True)
 
 @Client.on_message(filters.command('addadmin') & filters.private & filters.incoming)
