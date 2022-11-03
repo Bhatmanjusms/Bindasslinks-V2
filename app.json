@@ -45,7 +45,11 @@
     "OWNER_ID":{
       "description": "Id of the Owner",
       "value": "",
-      "required": true
+      "required": true}
+    ,
+    "SOURCE_CODE":{
+      "description": "Just a link to the source code",
+      "value": ""
     }
   },
   "addons": [],
