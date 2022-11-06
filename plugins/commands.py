@@ -90,7 +90,7 @@ async def about_command(c, m: Message):
     reply_markup = None if m.from_user.id not in Config.ADMINS else ABOUT_REPLY_MARKUP
     bot = await c.get_me()
     if Config.WELCOME_IMAGE:
-        return await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=Config.ABOUT_TEXT.format(bot.mention(style='md')), reply_markup=reply_markup, disable_web_page_preview=True)
+        return await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=Config.ABOUT_TEXT.format(bot.mention(style='md')), reply_markup=reply_markup)
     await m.reply_text(Config.ABOUT_TEXT.format(bot.mention(style='md')),reply_markup=reply_markup , disable_web_page_preview=True)
 
 @Client.on_message((filters.command('method') | filters.regex("🛃 Method"))&  filters.private)
