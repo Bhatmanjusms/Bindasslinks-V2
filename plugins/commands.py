@@ -19,6 +19,19 @@ logging.getLogger().setLevel(logging.INFO)
 
 avl_web1 = "".join(f"- {i}\n" for i in Config.base_sites)
 
+
+@Client.on_message(filters.command('maintenence') & filters.private)
+async def maintenence_command(c, m: Message):
+    if m.from_user.id not in Config.ADMINS:
+        return
+
+    if len(m.command) == 2:
+        value = is_enabled(m.command[1])
+        Config.MAINTENENCE_MODE = value
+        await m.reply("Updated successfully")
+    else:
+        await m.reply(f"Maintenence Mode - {Config.MAINTENENCE_MODE}\nEx: `/maintenence True`")
+
 @Client.on_message((filters.command('start')| filters.regex("▶️ Start")) & filters.private)
 async def start_cmd_handler(c:Client, m:Message):
     try:

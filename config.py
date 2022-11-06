@@ -52,6 +52,8 @@ class Config(object):
     REPLIT = f"https://{REPLIT_APP_NAME.lower()}.{REPLIT_USERNAME}.repl.co" if REPLIT_APP_NAME and REPLIT_USERNAME else False
     PING_INTERVAL = int(os.environ.get("PING_INTERVAL", "300"))
 
+    MAINTENENCE_MODE = False
+
     VERIFIED_TIME = 1
     LOG_CHANNEL = 0
     UPDATE_CHANNEL:int = 0

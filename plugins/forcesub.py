@@ -8,6 +8,9 @@ import traceback
 
 @Client.on_message(filters.private & filters.incoming)
 async def forcesub(c:Client, m:Message):
+    if Config.MAINTENENCE_MODE:
+        return await m.reply_text("**Bot is under maintenence**", quote=True)
+
     if Config.UPDATE_CHANNEL:
         try:
             owner = await c.get_users(int(Config.OWNER_ID))
