@@ -113,7 +113,8 @@ async def restart_handler(c: Client, m:Message):
 
 @Client.on_message((filters.command('direct_download_link') | filters.regex("📥 Direct Download Link")) & filters.private)
 async def direct_link_gen_cmd_handler(c: Client, m:Message):
-    reply_text = "**You Can Use This Command To Get Direct Download link📥\nFirst Send Your File Then Reply that file with This Command '/direct_download_link' **"
+    reply_text = "**💠 This Function Will Give You Direct Download Link Of Any File
+\n\n➡️ Replay With `/direct_download_link` To Any File**"
     try:
         if m.reply_to_message:
             if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
@@ -132,7 +133,7 @@ async def direct_link_gen_cmd_handler(c: Client, m:Message):
 
 @Client.on_message((filters.command('stream_link') | filters.regex("📡 Stream Link")) & filters.private)
 async def stream_link_gen_cmd_handler(c: Client, m:Message):
-    reply_text = "**You Can Use This Command To Get Streem link📡\nFirst Send Your File Then Reply that file with This Command '/stream_link' **"
+    reply_text = "**💠 This Function Will Give You Streaming Link Of Any Video File\n\n ➡️ Replay With `/stream_link` To Any Video File**"
     try:
         if m.reply_to_message:
             if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
@@ -151,7 +152,7 @@ async def stream_link_gen_cmd_handler(c: Client, m:Message):
 
 @Client.on_message((filters.command('file_store_link')| filters.regex("🗃 File Store Link")) & filters.private)
 async def file_store_cmd_handler(c: Client, m:Message):
-    reply_text = "**You Can Use This Command To Get File store link 🗃\nFirst Send Your File Then Reply that file with This Command '/file_store_link' **"
+    reply_text = "**💠 This Function Will Give You File Store Link Of Any File\n\n ➡️ Replay With `/file_store_link` To Any File**"
     try:
         if m.reply_to_message:
             if Config.FILE_STORE and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
@@ -171,11 +172,11 @@ async def file_store_cmd_handler(c: Client, m:Message):
 @Client.on_message((filters.command('bypass')| filters.regex("🔄 Bypass")) & filters.private)
 async def bypass_cmd_handler(c: Client, m:Message):
     if not Config.LINK_BYPASS and m.from_user.id not in Config.ADMINS:
-        await m.reply("Link Bypass has been disabled by the admins")
+        await m.reply("**✅ This Command Is Only For Bot Admins.\n\n🚫 You Are Not Admin Of This Bot**")
         return
 
     if not m.reply_to_message:
-        return await m.reply("Reply /bypass to link you want to bypass")
+        return await m.reply("**💠 This Function Will Give You Original Link Of Any {base_site} Link\n\n ➡️ Replay With /bypass To Any {base_site} Link Or Post Which Have {base_site} Link**")
 
     ediatble = await m.reply("`Processing...`", disable_web_page_preview=True, quote=True)
     caption = m.reply_to_message.text.html or m.reply_to_message.caption.html
