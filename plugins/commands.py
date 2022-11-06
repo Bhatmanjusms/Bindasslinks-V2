@@ -113,14 +113,14 @@ async def restart_handler(c: Client, m:Message):
 
 @Client.on_message((filters.command('direct_download_link') | filters.regex("📥 Direct Download Link")) & filters.private)
 async def direct_link_gen_cmd_handler(c: Client, m:Message):
-    reply_text = "You Can Use This Command To Get Direct link\nFirst Send Your File Then Reply that file with This Command"
+    reply_text = "**You Can Use This Command To Get Direct Download link📥\nFirst Send Your File Then Reply that file with This Command '/direct_download_link' **"
     try:
         if m.reply_to_message:
             if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
                 user = await get_user(m.from_user.id)
 
                 if not user["shortener_api"]:
-                    return await m.reply_text("Set your /api first")
+                    return await m.reply_text("**First you need to connect your account with /Api command\n then you can use this command**")
                     
                 await direct_gen_handler(c, m.reply_to_message, user, "direct")
             else:
@@ -132,14 +132,14 @@ async def direct_link_gen_cmd_handler(c: Client, m:Message):
 
 @Client.on_message((filters.command('stream_link') | filters.regex("📡 Stream Link")) & filters.private)
 async def stream_link_gen_cmd_handler(c: Client, m:Message):
-    reply_text = "You Can Use This Command To Get Streem link\nFirst Send Your File Then Reply that file with This Command"
+    reply_text = "**You Can Use This Command To Get Streem link📡\nFirst Send Your File Then Reply that file with This Command '/stream_link' **"
     try:
         if m.reply_to_message:
             if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
                 user = await get_user(m.from_user.id)
 
                 if not user["shortener_api"]:
-                    return await m.reply_text("Set your /api first")
+                    return await m.reply_text("**First you need to connect your account with /Api command\n then you can use this command**")
 
                 await direct_gen_handler(c, m.reply_to_message, user, "stream")
             else:
@@ -151,14 +151,14 @@ async def stream_link_gen_cmd_handler(c: Client, m:Message):
 
 @Client.on_message((filters.command('file_store_link')| filters.regex("🗃 File Store Link")) & filters.private)
 async def file_store_cmd_handler(c: Client, m:Message):
-    reply_text = "You Can Use This Command To Get File store link\nFirst Send Your File Then Reply that file with This Command"
+    reply_text = "**You Can Use This Command To Get File store link 🗃\nFirst Send Your File Then Reply that file with This Command '/file_store_link' **"
     try:
         if m.reply_to_message:
             if Config.FILE_STORE and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
                 user = await get_user(m.from_user.id)
 
                 if not user["shortener_api"]:
-                    return await m.reply_text("Set your /api first")
+                    return await m.reply_text("**First you need to connect your account with /Api command\n then you can use this command**")
 
                 await file_store_handler(m.reply_to_message, user)
             else:
