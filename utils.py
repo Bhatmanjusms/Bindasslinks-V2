@@ -755,11 +755,11 @@ async def gen_link(m: Message,log_msg: Messages, user, mode):
     stream_link = await replace_link(user, stream_link)
 
     if mode == "direct":
-        txt = f"<b>Original Download Link :</b> [Cʟɪᴄᴋ Hᴇʀᴇ]({stream_org_link})\n\n<b>📥 Shorted Download link :</b> {stream_link}\n\n"
+        txt = f"<b>🔗Original Download Link :</b> **[Cʟɪᴄᴋ Hᴇʀᴇ]({stream_org_link})**\n\n<b>📥 Shorted Download link :</b> `{stream_link}`\n\n"
 
         Stream_Text=Config.stream_msg_text.format(file_name, file_size) + txt
     elif mode == "stream":
-        txt = f"<b>Original Stream Link :</b> [Cʟɪᴄᴋ Hᴇʀᴇ]({org_page_link})\n\n<b>🖥 Shorted Watch link :</b> `{page_link}`"
+        txt = f"<b>🔗Original Stream Link :</b> **[Cʟɪᴄᴋ Hᴇʀᴇ]({org_page_link})**\n\n<b>🖥 Shorted Watch link :</b> `{page_link}`"
 
         Stream_Text=Config.stream_msg_text.format(file_name, file_size) + txt
 
