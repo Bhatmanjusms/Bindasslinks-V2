@@ -54,7 +54,7 @@ async def start_cmd_handler(c:Client, m:Message):
         await editable.delete()
         reply_markup = START_MESSAGE_KEYBOARD if Config.KEYBOARD_BUTTON else START_MESSAGE_REPLY_MARKUP
         if Config.WELCOME_IMAGE:
-            await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=t, reply_markup=reply_markup)
+            return await m.reply_photo(photo=Config.WELCOME_IMAGE, caption=t, reply_markup=reply_markup)
         await m.reply(t, reply_markup=reply_markup, disable_web_page_preview=True)
 
     except Exception as e:
@@ -942,10 +942,10 @@ async def username_message_cmd_handler(bot, message: Message):
     if message.reply_to_message:
         value = message.reply_to_message.text.html
         await db.update_bot_vars({"username_message": value})
-        Config.USERNAME_MESSAGE = value
+        Config.USERNAME_TEXT = value
         await message.reply("Updated successfully")
     else:
-        await message.reply(f"Username message\n\n`{Config.USERNAME_MESSAGE}`\n\nEx: Reply /username_message to the username_message")
+        await message.reply(f"Username message\n\n`{Config.USERNAME_TEXT}`\n\nEx: Reply /username_message to the username_message")
 
 
 @Client.on_message(filters.command('hashtag_message') & filters.private)
