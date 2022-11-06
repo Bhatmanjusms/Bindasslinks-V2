@@ -283,7 +283,7 @@ async def api_handler(bot, m:Message):
 async def bitly_api_handler(bot, m:Message):
     REPLY_MARKUP = InlineKeyboardMarkup([
         [
-            InlineKeyboardButton('Connect', url='https://bindaaslinks.com/member/tools/api'),
+            InlineKeyboardButton('Connect', url='https://app.bitly.com/settings/api/'),
 
         ],])
 
