@@ -587,15 +587,13 @@ async def welcome_image_cmd_handler(bot, message):
     if message.from_user.id not in Config.ADMINS:
         return
     if len(message.command) == 2:
-        value = message.command[1]
+        value = int(message.command[1]) if "0" in message.command else message.command[1]
         await db.update_bot_vars({"welcome_image": value})
         Config.WELCOME_IMAGE= value
         await message.reply("Updated successfully")
     else:
         await message.reply(f"IMAGE - {Config.WELCOME_IMAGE}\nEx: /welcome_image url")
- 
-  
-  
+
 @Client.on_message(filters.command('base_site') & filters.private)
 async def base_site_cmd_handler(bot, message):
     if message.from_user.id not in Config.ADMINS:
