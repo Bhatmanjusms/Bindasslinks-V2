@@ -175,7 +175,7 @@ async def bypass_cmd_handler(c: Client, m:Message):
         return
 
     if not m.reply_to_message:
-        return await m.reply("**💠 This Function Will Give You Original Link Of Any {base_site} Link\n\n ➡️ Replay With /bypass To Any {base_site} Link Or Post Which Have {base_site} Link**")
+        return await m.reply("**💠 This Function Will Give You Original Link Of Any {site} Link\n\n ➡️ Replay With /bypass To Any {site} Link Or Post Which Have {site} Link**")
 
     ediatble = await m.reply("`Processing...`", disable_web_page_preview=True, quote=True)
     caption = m.reply_to_message.text.html or m.reply_to_message.caption.html
