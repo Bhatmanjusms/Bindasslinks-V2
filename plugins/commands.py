@@ -113,8 +113,7 @@ async def restart_handler(c: Client, m:Message):
 
 @Client.on_message((filters.command('direct_download_link') | filters.regex("📥 Direct Download Link")) & filters.private)
 async def direct_link_gen_cmd_handler(c: Client, m:Message):
-    reply_text = "**💠 This Function Will Give You Direct Download Link Of Any File
-\n\n➡️ Replay With `/direct_download_link` To Any File**"
+    reply_text = "**💠 This Function Will Give You Direct Download Link Of Any File\n\n➡️ Replay With `/direct_download_link` To Any File**"
     try:
         if m.reply_to_message:
             if Config.DIRECT_GEN and (m.reply_to_message.video or m.reply_to_message.document or m.reply_to_message.audio):
