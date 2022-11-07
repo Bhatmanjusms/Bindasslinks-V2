@@ -10,6 +10,7 @@ __pycache__/
 *$py.class
 
 tests.py
+todo.txt
 # C extensions
 *.so
 sample_info.txt

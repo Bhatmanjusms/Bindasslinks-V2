@@ -1,28 +1,16 @@
+import functools
+
 from config import Config
-from database.users import get_user
-from pyrogram.filters import create
-from pyrogram.types import InlineKeyboardButton, InlineKeyboardMarkup, Message
+from pyrogram import Client
+from pyrogram.types import Message
 
 
-async def is_private_filter(_, __, m: Message):
-    
-    user = m.from_user.id
-    has_access = (await get_user(user))["has_access"]
+def maintenence_mode(func):
+    @functools.wraps(func)
+    async def wrapper(client: "Client", message: "Message"):
 
-    is_private = not bool(Config.IS_PRIVATE)
-
-    REPLY_MARKUP = InlineKeyboardMarkup([
-        [
-            InlineKeyboardButton('Request Access', callback_data=f'request_access#{m.from_user.id}'),
-        ],
-
-    ])
-    if m.from_user.id not in Config.ADMINS and Config.IS_PRIVATE and not has_access:
-        await m.reply_text("This bot works only for authorized users. Request admin to use this bot", reply_markup=REPLY_MARKUP, disable_web_page_preview=True)
-
-    else:
-        return True
-
-    return is_private
-
-is_private = create(is_private_filter)
+        if Config.MAINTENENCE_MODE and message.from_user.id not in Config.ADMINS:
+            return await message.reply_text("**Bot is under maintenence**", quote=True)
+            
+        return await func(client, message)
+    return wrapper

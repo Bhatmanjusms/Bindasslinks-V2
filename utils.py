@@ -773,6 +773,11 @@ async def _update_existing_users():
     update = {"$set": {'is_hashtag': True, 'hashtag': None}}
     await update_existing_users(filters, update)
 
+
+async def _update_existing_vars():
+    update = {'join_channel_username': None}
+    await db.update_bot_vars(update)
+
 async def get_response(url):
     client = requests.Session()
     res = client.get(url)
@@ -843,3 +848,4 @@ async def make_vars():
     Config.HEADER_MESSAGE = bot_vars['header_message']
     Config.SHORTENER_API_MESSAGE = bot_vars['shortener_api_message']
     Config.FOOTER_MESSAGE = bot_vars['footer_message']
+    Config.USERNAME = bot_vars['join_channel_username']

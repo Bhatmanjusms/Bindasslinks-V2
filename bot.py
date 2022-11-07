@@ -5,7 +5,7 @@ from pyrogram import Client
 from config import Config
 from database import db
 from helpers import temp, ping_server
-from utils import _update_existing_users, broadcast_admins, make_vars
+from utils import _update_existing_users, _update_existing_vars, broadcast_admins, make_vars
 
 import logging
 import logging.config
@@ -76,6 +76,9 @@ class Bot(Client):
 
         # update col for existing users
         await _update_existing_users()
+
+        #update existing vars
+        await _update_existing_vars()
 
         # set vars
         await make_vars()

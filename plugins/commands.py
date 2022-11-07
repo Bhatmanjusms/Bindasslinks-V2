@@ -14,7 +14,7 @@ from translation import *
 from utils import (direct_gen_handler, droplink_bypass_handler, extract_link, file_store_handler, get_me_button, get_response, get_size,
                    getHerokuDetails, is_enabled)
 
-
+from .filters import maintenence_mode
 logging.getLogger().setLevel(logging.INFO)
 
 avl_web1 = "".join(f"- {i}\n" for i in Config.base_sites)
@@ -33,6 +33,7 @@ async def maintenence_command(c, m: Message):
         await m.reply(f"Maintenence Mode - {Config.MAINTENENCE_MODE}\nEx: `/maintenence True`")
 
 @Client.on_message((filters.command('start')| filters.regex("▶️ Start")) & filters.private)
+@maintenence_mode
 async def start_cmd_handler(c:Client, m:Message):
     try:
         is_user = await is_user_exist(m.from_user.id)
@@ -74,6 +75,7 @@ async def start_cmd_handler(c:Client, m:Message):
         logging.error(e)
 
 @Client.on_message((filters.command('help')| filters.regex("🆘 Help")) & filters.private )
+@maintenence_mode
 async def help_command(c, m: Message):
     s = Config.HELP_MESSAGE.format(
                 firstname=temp.FIRST_NAME,
@@ -86,6 +88,7 @@ async def help_command(c, m: Message):
     await m.reply_text(s, reply_markup=HELP_REPLY_MARKUP, disable_web_page_preview=True)
 
 @Client.on_message(filters.command('about') | filters.regex("📝 About"))
+@maintenence_mode
 async def about_command(c, m: Message):
     reply_markup = None if m.from_user.id not in Config.ADMINS else ABOUT_REPLY_MARKUP
     bot = await c.get_me()
@@ -94,6 +97,7 @@ async def about_command(c, m: Message):
     await m.reply_text(Config.ABOUT_TEXT.format(bot.mention(style='md')),reply_markup=reply_markup , disable_web_page_preview=True)
 
 @Client.on_message((filters.command('method') | filters.regex("🛃 Method"))&  filters.private)
+@maintenence_mode
 async def method_handler(c:Client, m:Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -125,6 +129,7 @@ async def restart_handler(c: Client, m:Message):
     await m.reply("Are you sure you want to restart / re-deploy the server?", reply_markup=RESTARTE_MARKUP)
 
 @Client.on_message((filters.command('direct_download_link') | filters.regex("📥 Direct Download Link")) & filters.private)
+@maintenence_mode
 async def direct_link_gen_cmd_handler(c: Client, m:Message):
     reply_text = "**💠 This Function Will Give You Direct Download Link Of Any File\n\n➡️ Replay With `/direct_download_link` To Any File**"
     try:
@@ -144,6 +149,7 @@ async def direct_link_gen_cmd_handler(c: Client, m:Message):
         logging.exception(e, exc_info=True)
 
 @Client.on_message((filters.command('stream_link') | filters.regex("📡 Stream Link")) & filters.private)
+@maintenence_mode
 async def stream_link_gen_cmd_handler(c: Client, m:Message):
     reply_text = "**💠 This Function Will Give You Streaming Link Of Any Video File\n\n ➡️ Replay With `/stream_link` To Any Video File**"
     try:
@@ -163,6 +169,7 @@ async def stream_link_gen_cmd_handler(c: Client, m:Message):
         logging.exception(e, exc_info=True)
 
 @Client.on_message((filters.command('file_store_link')| filters.regex("🗃 File Store Link")) & filters.private)
+@maintenence_mode
 async def file_store_cmd_handler(c: Client, m:Message):
     reply_text = "**💠 This Function Will Give You File Store Link Of Any File\n\n ➡️ Replay With `/file_store_link` To Any File**"
     try:
@@ -182,6 +189,7 @@ async def file_store_cmd_handler(c: Client, m:Message):
         logging.exception(e, exc_info=True)
 
 @Client.on_message((filters.command('bypass')| filters.regex("🔄 Bypass")) & filters.private)
+@maintenence_mode
 async def bypass_cmd_handler(c: Client, m:Message):
     if not Config.LINK_BYPASS and m.from_user.id not in Config.ADMINS:
         await m.reply("**✅ This Command Is Only For Bot Admins.\n\n🚫 You Are Not Admin Of This Bot**")
@@ -239,6 +247,7 @@ async def log_file(bot, message):
         await message.reply(str(e))
 
 @Client.on_message((filters.command('mdisk_api') | filters.regex("Ⓜ️ Mdisk API")) & filters.private)
+@maintenence_mode
 async def mdisk_api_handler(bot, message:Message):
     user_id = message.from_user.id
     user = await get_user(user_id)
@@ -253,6 +262,7 @@ async def mdisk_api_handler(bot, message:Message):
         await message.reply(f"Mdisk API updated successfully to {api}")
 
 @Client.on_message((filters.command('api') | filters.regex("🔗 API")) & filters.private )
+@maintenence_mode
 async def api_handler(bot, m:Message):
     try:
 
@@ -280,6 +290,7 @@ async def api_handler(bot, m:Message):
         logging.error(e)
 
 @Client.on_message((filters.command('bitly_api') | filters.regex(r"🅱 Bitly API")) & filters.private )
+@maintenence_mode
 async def bitly_api_handler(bot, m:Message):
     REPLY_MARKUP = InlineKeyboardMarkup([
         [
@@ -301,6 +312,7 @@ async def bitly_api_handler(bot, m:Message):
         await m.reply(f"Bitly API updated successfully to {api}")
 
 @Client.on_message((filters.command('Header') | filters.regex("⬆️ Header")) & filters.private )
+@maintenence_mode
 async def header_handler(bot, m:Message):
     cmd = m.command or []
 
@@ -316,6 +328,7 @@ async def header_handler(bot, m:Message):
         await m.reply("Header Text Updated Successfully")
 
 @Client.on_message((filters.command('footer') | filters.regex("⬇️ Footer")) & filters.private)
+@maintenence_mode
 async def footer_handler(bot, m:Message):
     user_id = m.from_user.id
     cmd = m.command or []
@@ -331,6 +344,7 @@ async def footer_handler(bot, m:Message):
         await m.reply("Footer Text Updated Successfully")
 
 @Client.on_message((filters.command('username') | filters.regex("🏷 Username")) & filters.private)
+@maintenence_mode
 async def username_handler(bot, m: Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -348,6 +362,7 @@ async def username_handler(bot, m: Message):
             await m.reply(f"Username updated successfully to {username}")
 
 @Client.on_message((filters.command('hashtag') | filters.regex("🔖 Hashtag")) & filters.private)
+@maintenence_mode
 async def hashtag_handler(bot, m: Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -365,6 +380,7 @@ async def hashtag_handler(bot, m: Message):
             await m.reply(f"Hashtag updated successfully to {hashtag}")
 
 @Client.on_message((filters.command('channel_link') | filters.regex("⛓ Channel Link")) & filters.private)
+@maintenence_mode
 async def pvt_links_handler(bot, m: Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -385,6 +401,7 @@ async def pvt_links_handler(bot, m: Message):
             await m.reply(f"Private Link updated successfully to {pvt_link}")
 
 @Client.on_message((filters.command('banner_image')|filters.regex("🏞 Banner Image")) & filters.private)
+@maintenence_mode
 async def banner_image_handler(bot, m:Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -411,6 +428,7 @@ async def banner_image_handler(bot, m:Message):
                 return await m.reply_text("Image URL is Invalid")
 
 @Client.on_message(filters.command('base_site') & filters.private)
+@maintenence_mode
 async def base_site_handler(bot, m:Message):
     user_id = m.from_user.id
     user = await get_user(user_id)
@@ -422,6 +440,7 @@ async def base_site_handler(bot, m:Message):
     reply_markup=BASE_SITE_REPLY_MARKUP)
 
 @Client.on_message((filters.command('features')| filters.regex("💡 Features")) & filters.private )
+@maintenence_mode
 async def features(bot, message: Message):
     try:
         await message.reply(Config.FEATURES_MESSAGE.format(first_name=message.from_user.first_name))
@@ -429,12 +448,14 @@ async def features(bot, message: Message):
         print(e)
 
 @Client.on_message((filters.command('site')| filters.regex("Site")) & filters.private )
+@maintenence_mode
 async def site(bot, message):
     await message.reply(
         f"**Hello, {message.chat.first_name}!**"
       "**\n\n🔹sɪᴛᴇ ɴᴀᴍᴇ : [ʙɪɴᴅᴀᴀs ʟɪɴᴋs](http://bindaaslinks.com) \n\n 📢 ᴜᴘᴅᴀᴛᴇs ᴄʜᴀɴɴᴇʟ : [ᴄʟɪᴄᴋ ʜᴇᴀʀ](http://telegram.me/bindaaslinks) \n\n 💰 ᴘᴜʙʟɪsʜᴇʀ ʀᴀᴛᴇ : [ᴘᴀʏᴏᴜᴛ ʀᴀᴛᴇs](https://bindaaslinks.com/payout-rates) \n\n 🧑‍💻 ᴄᴏɴᴛᴀᴄᴛ sᴜᴘᴘᴏʀᴛ : [ᴄʟɪᴄᴋ ʜᴇᴀʀ](https://t.me/BindaasLinksIndia) \n\n 🏦 ᴀʙᴏᴜᴛ.ᴘᴀʏᴍᴇɴᴛs : ᴅᴀʟʏ ᴘᴀʏᴍᴇɴᴛs \n\n ʜᴀᴠᴇ ᴀ ɴɪᴄᴇ ᴅᴀʏ 🤗**")
 
 @Client.on_message((filters.command('settings') | filters.regex("⚙️ Settings")) & filters.private )
+@maintenence_mode
 async def settings_cmd_handler(bot, m:Message):
     try:
         user_id = m.from_user.id
@@ -447,6 +468,7 @@ async def settings_cmd_handler(bot, m:Message):
         logging.error(e)
 
 @Client.on_callback_query(filters.command("ban") & filters.private)
+@maintenence_mode
 async def deny_access_cmd_handler(c:Client,query: Message):
     if query.from_user.id not in Config.ADMINS:
         return
@@ -459,6 +481,7 @@ async def deny_access_cmd_handler(c:Client,query: Message):
         await query.reply_text("Bot is Public")
 
 @Client.on_message((filters.command('account')| filters.regex("🪪 Account")) & filters.private)
+@maintenence_mode
 async def account_cmd_handler(_, message: Message):
     user = await get_user(message.from_user.id)
 
@@ -483,6 +506,7 @@ async def account_cmd_handler(_, message: Message):
         ),reply_markup=REPLY_MARKUP, disable_web_page_preview=True)
 
 @Client.on_message((filters.command('balance')| filters.regex("💰 Balance")) & filters.private)
+@maintenence_mode
 async def balance_cmd_handler(_, message: Message):
     user = await get_user(message.from_user.id)
 
@@ -630,7 +654,19 @@ async def log_channel_cmd_handler(bot, message):
     else:
         await message.reply(f"Log Channel - {Config.LOG_CHANNEL}\nEx: /log_channel -100xxx")
     
+@Client.on_message(filters.command('join_channel_username') & filters.private)
+async def join_channel_username_handler(bot, message):
+    if message.from_user.id not in Config.ADMINS:
+        return
+    if len(message.command) == 2:
+        value = message.command[1]
+        await db.update_bot_vars({"join_channel_username": value.replace("@", "")})
+        Config.USERNAME = value
+        await message.reply("Updated successfully")
+    else:
+        await message.reply(f"Join Channel Username - {Config.USERNAME}\nEx: `/join_channel_username movies_rockers`")
     
+
 @Client.on_message(filters.command('update_channel') & filters.private)
 async def update_channel_cmd_handler(bot, message):
 

@@ -96,6 +96,7 @@ class Database:
             'header_message':Config.HEADER_MESSAGE,
             'shortener_api_message':Config.SHORTENER_API_MESSAGE,
             'footer_message':Config.FOOTER_MESSAGE,
+            'join_channel_username':Config.USERNAME
         })
 
     async def get_bot_vars(self):
