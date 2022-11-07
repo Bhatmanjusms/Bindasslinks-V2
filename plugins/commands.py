@@ -35,6 +35,8 @@ async def maintenence_command(c, m: Message):
 @Client.on_message((filters.command('start')| filters.regex("▶️ Start")) & filters.private)
 @maintenence_mode
 async def start_cmd_handler(c:Client, m:Message):
+    START_MESSAGE_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data='help_command'), InlineKeyboardButton('About', callback_data='about_command')], [InlineKeyboardButton('Method', callback_data='method_command'), InlineKeyboardButton('Join Channel♥️', url=f'https://telegram.me/{Config.USERNAME}')], [InlineKeyboardButton('Close', callback_data='delete')]])
+
     try:
         is_user = await is_user_exist(m.from_user.id)
         if not is_user and Config.LOG_CHANNEL: await c.send_message(Config.LOG_CHANNEL, f"#NewUser\n\nUser ID: `{m.from_user.id}`\nName: {m.from_user.mention}", )

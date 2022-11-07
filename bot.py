@@ -70,7 +70,6 @@ class Bot(Client):
         temp.BOT_USERNAME = me.username
         temp.FIRST_NAME = me.first_name
 
-
         None if await db.get_bot_stats() else await db.create_stats()
         None if await db.get_bot_vars() else await db.create_vars()
 
@@ -95,6 +94,7 @@ class Bot(Client):
 
         await broadcast_admins(self, '** Bot started successfully **')
         logging.info('Bot started')
+        logging.info(f"Diect Link Gen - {Config.DIRECT_GEN}")
 
     async def stop(self, *args):
         await broadcast_admins(self, '** Bot Stopped Bye **')

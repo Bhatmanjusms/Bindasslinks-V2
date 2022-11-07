@@ -105,6 +105,7 @@ async def on_callback_query(bot:Client, query:CallbackQuery):
         await query.message.edit(Config.ABOUT_TEXT.format(bot.mention(style='md')), reply_markup=ABOUT_REPLY_MARKUP, disable_web_page_preview=True)
 
     elif query.data == 'start_command':
+        START_MESSAGE_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Help', callback_data='help_command'), InlineKeyboardButton('About', callback_data='about_command')], [InlineKeyboardButton('Method', callback_data='method_command'), InlineKeyboardButton('Join Channel♥️', url=f'https://telegram.me/{Config.USERNAME}')], [InlineKeyboardButton('Close', callback_data='delete')]])
         new_user = await get_user(query.from_user.id)
         tit = Config.START_MESSAGE.format(query.from_user.mention, new_user["method"], new_user["base_site"])
         await query.message.edit(tit, reply_markup=START_MESSAGE_REPLY_MARKUP, disable_web_page_preview=True)
