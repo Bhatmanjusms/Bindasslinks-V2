@@ -142,7 +142,7 @@ async def direct_link_gen_cmd_handler(c: Client, m:Message):
                     
                 await direct_gen_handler(c, m.reply_to_message, user, "direct")
             else:
-                await m.reply_text(reply_text)
+                await m.reply_text("This command has been disabled")
         else:
             await m.reply_text(reply_text)
     except Exception as e:
@@ -162,7 +162,7 @@ async def stream_link_gen_cmd_handler(c: Client, m:Message):
 
                 await direct_gen_handler(c, m.reply_to_message, user, "stream")
             else:
-                await m.reply_text(reply_text)
+                await m.reply_text("This command has been disabled")
         else:
             await m.reply_text(reply_text)
     except Exception as e:
@@ -848,9 +848,10 @@ async def direct_gen_db_cmd_handler(bot, message):
     if message.from_user.id not in Config.ADMINS:
         return
     if len(message.command) == 2:
-        value = message.command[1]
-        await db.update_bot_vars({"direct_gen_db": int(value)})
+        value = int(message.command[1])
+        await db.update_bot_vars({"direct_gen_db": value})
         Config.DIRECT_GEN_DB = value
+        Config.DIRECT_GEN = bool(Config.DIRECT_GEN_DB and Config.DIRECT_GEN_BOT_USERNAME and Config.DIRECT_GEN_URL)
         await message.reply("Updated successfully")
     else:
         await message.reply(f"direct gen db - {Config.DIRECT_GEN_DB}\nEx: /direct_gen_db -100xx")
@@ -875,6 +876,7 @@ async def direct_gen_bot_username_cmd_handler(bot, message):
         value = message.command[1]
         await db.update_bot_vars({"direct_gen_bot_username": value})
         Config.DIRECT_GEN_BOT_USERNAME = value
+        Config.DIRECT_GEN = bool(Config.DIRECT_GEN_DB and Config.DIRECT_GEN_BOT_USERNAME and Config.DIRECT_GEN_URL)
         await message.reply("Updated successfully")
     else:
         await message.reply(f"direct gen bot username - {Config.DIRECT_GEN_BOT_USERNAME}\nEx: /direct_gen_bot_username username")
@@ -887,6 +889,7 @@ async def direct_gen_url_cmd_handler(bot, message):
         value = message.command[1]
         await db.update_bot_vars({"direct_gen_url": value})
         Config.DIRECT_GEN_URL = value
+        Config.DIRECT_GEN = bool(Config.DIRECT_GEN_DB and Config.DIRECT_GEN_BOT_USERNAME and Config.DIRECT_GEN_URL)
         await message.reply("Updated successfully")
     else:
         await message.reply(f"direct gen url - {Config.DIRECT_GEN_URL}\nEx: /direct_gen_url -100xx")
