@@ -121,8 +121,8 @@ START_MESSAGE_KEYBOARD = ReplyKeyboardMarkup([
     [KeyboardButton(text="⬆️ Header"), KeyboardButton(text="⬇️ Footer")],
     [KeyboardButton(text="🏷 Username"), KeyboardButton(text="🔖 Hashtag")],
     [KeyboardButton(text="⛓ Channel Link"), KeyboardButton(text="🏞 Banner Image")],
-    [KeyboardButton(text="🔄 Bypass"), KeyboardButton(text="📥 Direct Download Link")],
-    [KeyboardButton(text="📡 Stream Link"), KeyboardButton(text="🗃 File Store Link")],
+    [KeyboardButton(text="🗃 File Store Link"), KeyboardButton(text="📡 Stream Link")],
+    [KeyboardButton(text="📥 Direct Download Link"), KeyboardButton(text="🔄 Bypass")],
     ])
 
 
