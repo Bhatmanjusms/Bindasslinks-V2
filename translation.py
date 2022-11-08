@@ -118,7 +118,7 @@ START_MESSAGE_KEYBOARD = ReplyKeyboardMarkup([
     [KeyboardButton(text="Ⓜ️ Mdisk API"), KeyboardButton(text="🔗 API"), KeyboardButton(text="🅱 Bitly API")],
     [KeyboardButton(text="🛃 Method"), KeyboardButton(text="⚙️ Settings"), KeyboardButton(text="🪪 Account")],
     [KeyboardButton(text="💰 Balance")],
-    [KeyboardButton(text="⬆️ Header"), KeyboardButton(text="⬇️ Footer")],
+    [KeyboardButton(text="⬆️ Header"), KeyboardButton(text="⬇️ Footer"), KeyboardButton(text="⬆️ Header"), KeyboardButton(text="⬇️ Footer")],
     [KeyboardButton(text="🏷 Username"), KeyboardButton(text="🔖 Hashtag")],
     [KeyboardButton(text="⛓ Channel Link"), KeyboardButton(text="🏞 Banner Image")],
     [KeyboardButton(text="🗃 File Store Link"), KeyboardButton(text="📡 Stream Link")],
