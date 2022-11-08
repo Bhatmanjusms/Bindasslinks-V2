@@ -1165,7 +1165,9 @@ async def admin_cmd_cmd_handler(bot, message: Message):
 /header_message
 /account_message
 /maintenence
-/welcome_image"""
+/welcome_image
+/broadcast
+/broadcast_as_copy"""
 
     await message.reply(txt)
 
