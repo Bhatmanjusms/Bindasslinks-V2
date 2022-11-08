@@ -115,7 +115,7 @@ START_MESSAGE_REPLY_MARKUP = InlineKeyboardMarkup([[InlineKeyboardButton('Help',
 START_MESSAGE_KEYBOARD = ReplyKeyboardMarkup([ 
     [KeyboardButton(text="▶️ Start")], 
     [KeyboardButton(text="🆘 Help"), KeyboardButton(text="📝 About"), KeyboardButton(text="🛃 Method")],
-    [KeyboardButton(text="🛃 Method"), KeyboardButton(text="Ⓜ️ Mdisk API")],
+    [KeyboardButton(text="Ⓜ️ Mdisk API")],
     [KeyboardButton(text="🔗 API"), KeyboardButton(text="🅱 Bitly API")],
     [KeyboardButton(text="⬆️ Header"), KeyboardButton(text="⬇️ Footer")],
     [KeyboardButton(text="🏷 Username"), KeyboardButton(text="🔖 Hashtag")],
