@@ -55,7 +55,7 @@ async def start_cmd_handler(c:Client, m:Message):
                     await update_user_info(m.from_user.id, {"shortener_api": user_api})
                     site_index = Config.base_sites.index(site) + 1
                     await update_user_info(m.from_user.id, {f"shortener_api_{site_index}": user_api})
-                    await m.reply_text(f"You have successfully connected your {site} API\n\nYour Api: {user_api}\n\n")
+                    await m.reply_text(f"**Thanks For Connecting Api Sir🤗\nYour Api successfully connected To {site} \nThis Is Your Api Key: {user_api}\n\n Now You Can Short Unlimited Links in This Bot\n Have A Nice Day😇**")
                 else:
                     await m.reply_text("This website is not available")
             except Exception as e:
