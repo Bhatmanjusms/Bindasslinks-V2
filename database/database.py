@@ -103,6 +103,7 @@ class Database:
         return (await self.vars.find_one({"bot": helpers.temp.BOT_USERNAME}))
 
     async def update_bot_vars(self, value:dict):
+        print(helpers.temp.BOT_USERNAME)
         myquery = {"bot": helpers.temp.BOT_USERNAME}
         newvalues = {"$set" : value}
         return await self.vars.update_one(myquery, newvalues)

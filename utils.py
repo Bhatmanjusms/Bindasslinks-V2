@@ -793,7 +793,7 @@ async def make_vars():
     bot_vars = await db.get_bot_vars()
     Config.ADMINS = bot_vars['admins']
     Config.BROADCAST_AS_COPY = bot_vars['broadcast_as_copy']
-    Config.IS_PRIVATE = bot_vars['broadcast_as_copy']
+    Config.IS_PRIVATE = bot_vars['is_private']
     Config.CHANNELS = bot_vars['channels']
     Config.CHANNEL_ID = bot_vars['channel_id']
     Config.USERNAME =bot_vars['username']

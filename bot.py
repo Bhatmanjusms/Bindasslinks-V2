@@ -69,6 +69,7 @@ class Bot(Client):
         self.username = f'@{me.username}'
         temp.BOT_USERNAME = me.username
         temp.FIRST_NAME = me.first_name
+        print(temp.BOT_USERNAME)
 
         None if await db.get_bot_stats() else await db.create_stats()
         None if await db.get_bot_vars() else await db.create_vars()
