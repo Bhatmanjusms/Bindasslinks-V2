@@ -25,14 +25,15 @@ async def private_link_main_handler(c:Client, message:Message):
     try:
         if message.text:
             has_link = len(await extract_link(message.text))
-            if message.text.startswith('/'):return
-            elif len(message.text.strip()) == 20 and has_link <=0 and not message.reply_markup:
-                api = message.text
+            api = message.text.replace(" ", "").replace("  ", "")
+            if message.text.startswith('/'):
+                return
+
+            elif len(api) == 20 and has_link <=0 and not message.reply_markup:
                 await update_user_info(message.from_user.id, {"mdisk_api": api})
                 return await message.reply(f"Mdisk API updated successfully to {api}")
 
-            elif len(message.text.strip()) == 40 and has_link <=0 and not message.reply_markup:
-                api = message.text
+            elif len(api) == 40 and has_link <=0 and not message.reply_markup:
                 await update_user_info(message.from_user.id, {"shortener_api": api})
                 site_index = Config.base_sites.index(user['base_site']) + 1
                 await update_user_info(message.from_user.id, {f'shortener_api_{site_index}': api})
