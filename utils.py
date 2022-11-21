@@ -175,31 +175,34 @@ async def replace_link(user, text, x=""):
         if ("t.me" not in link and not is_pvt_link) or ("t.me" in link and not is_pvt_link):
             long_url = link
             logging.info(f"Contverting {long_url}")
-            if user["include_domain"]:
-                include = user["include_domain"]
-                domain = [domain.strip() for domain in include]
-                if any(i in link for i in domain):
+
+            if "http" in link or "https" in link:
+
+                if user["include_domain"]:
+                    include = user["include_domain"]
+                    domain = [domain.strip() for domain in include]
+                    if any(i in link for i in domain):
+                        try:
+                            short_link = await shortzy.convert(link, x)
+                        except Exception:
+                            short_link = await tiny_url_main(await shortzy.get_quick_link(link))
+                        text = text.replace(long_url, short_link)
+                elif user["exclude_domain"]:
+                    exclude = user["include_domain"]
+                    domain = [domain.strip() for domain in exclude]
+                    if all(i not in link for i in domain):
+                        try:
+                            short_link = await shortzy.convert(link, x)
+                        except Exception:
+                            short_link = await tiny_url_main(await shortzy.get_quick_link(link))
+                        text = text.replace(long_url, short_link)
+                else:
                     try:
                         short_link = await shortzy.convert(link, x)
-                    except Exception:
+                    except Exception as e:
+                        logging.exception(e)
                         short_link = await tiny_url_main(await shortzy.get_quick_link(link))
                     text = text.replace(long_url, short_link)
-            elif user["exclude_domain"]:
-                exclude = user["include_domain"]
-                domain = [domain.strip() for domain in exclude]
-                if all(i not in link for i in domain):
-                    try:
-                        short_link = await shortzy.convert(link, x)
-                    except Exception:
-                        short_link = await tiny_url_main(await shortzy.get_quick_link(link))
-                    text = text.replace(long_url, short_link)
-            else:
-                try:
-                    short_link = await shortzy.convert(link, x)
-                except Exception as e:
-                    logging.exception(e)
-                    short_link = await tiny_url_main(await shortzy.get_quick_link(link))
-                text = text.replace(long_url, short_link)
     return text
 
 ####################  Mdisk and Droplink  ####################
