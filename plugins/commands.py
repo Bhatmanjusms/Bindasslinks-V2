@@ -341,7 +341,7 @@ async def footer_handler(bot, m:Message):
         await update_user_info(user_id, {"footer_text": ""})
         return await m.reply("Footer Text Successfully Removed")
     else:
-        footer_text = m.text.html.replace("/footer", "")
+        footer_text = m.text.html.replace("/footer", "").replace("/Footer", "")
         await update_user_info(user_id, {"footer_text": footer_text})
         await m.reply("Footer Text Updated Successfully")
 
